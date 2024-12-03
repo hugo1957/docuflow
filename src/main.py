@@ -10,7 +10,7 @@ from pages.utils.navigation import create_footer
 def main(page: ft.Page):
     page.adaptive = False
     page.theme_mode = ft.ThemeMode.LIGHT
-    page.bgcolor = ft.colors.WHITE
+    page.bgcolor = ft.Colors.WHITE
     theme = ft.Theme()
     theme.page_transitions.windows = ft.PageTransitionTheme.NONE
     theme.page_transitions.android = ft.PageTransitionTheme.NONE
@@ -37,7 +37,7 @@ def main(page: ft.Page):
             content=ft.ProgressRing(width=50, height=50, stroke_width=5),
             alignment=ft.alignment.center,
             expand=True,
-            bgcolor=ft.colors.with_opacity(0.1, ft.colors.TRANSPARENT)
+            bgcolor=ft.Colors.with_opacity(0.1, ft.Colors.TRANSPARENT)
         )
         page.overlay.append(loader)
         page.update()
@@ -79,7 +79,7 @@ def main(page: ft.Page):
     page.on_view_pop = view_pop
     page.go(page.route)
 
-
+from threading import Timer
 def ViewHome(page):
     def open_dlg(e, text):
         def show_loader():
@@ -160,7 +160,7 @@ def ViewHome(page):
             ),
             padding=ft.padding.all(10),
             border_radius=ft.border_radius.all(10),
-            bgcolor=ft.Colors.GREY_100,
+            bgcolor=ft.Colors.BLUE,
         )
 
     def redes_sociales():
@@ -214,11 +214,92 @@ def ViewHome(page):
             ]
         )
 
+    def create_carousel(page):
+        # Lista de imágenes
+        images = [
+            {"src": "documento.png", "alt": "Banner 1"},
+            {"src": "Autenticacion/1.jpeg", "alt": "Banner 2"},
+            {"src": "banner3.jpg", "alt": "Banner 3"},
+        ]
+
+        # Índice para la imagen activa
+        active_index = 0
+
+        # Imagen animada
+        animated_image = ft.AnimatedSwitcher(
+            ft.Image(src=images[0]["src"], width="100%", height=200, fit=ft.ImageFit.COVER),
+            duration=500,  # Duración de la animación (ms)
+            transition=ft.AnimatedSwitcherTransition.FADE,
+        )
+
+        # Función para actualizar el carrusel
+        def update_carousel(index=None):
+            nonlocal active_index
+            if index is None:  # Cambio automático
+                active_index = (active_index + 1) % len(images)
+            else:  # Cambio manual
+                active_index = index
+
+            # Actualizar imagen animada
+            animated_image.content = ft.Image(
+                src=images[active_index]["src"],
+                width="100%",
+                height=200,
+                fit=ft.ImageFit.COVER,
+            )
+            update_dots()
+            page.update()
+
+        # Función para actualizar los puntos
+        def update_dots():
+            for i, dot in enumerate(dots.controls):
+                dot.bgcolor = "#007BFF" if i == active_index else "#CCCCCC"
+
+        # Temporizador para el cambio automático de imágenes
+        def start_timer():
+            def auto_update():
+                update_carousel()
+                start_timer()  # Reinicia el temporizador
+            Timer(2.0, auto_update).start()  # Cambia la imagen cada 2 segundos
+
+        # Controles de puntos
+        dots = ft.Row(
+            alignment=ft.MainAxisAlignment.CENTER,
+            controls=[
+                ft.Container(
+                    width=10,
+                    height=10,
+                    border_radius=50,
+                    bgcolor="#007BFF" if i == active_index else "#CCCCCC",
+                    on_click=lambda e, i=i: update_carousel(i),
+                )
+                for i in range(len(images))
+            ],
+        )
+
+        carousel = ft.Column(
+            controls=[
+                ft.Container(
+                    width="100%", height=200, content=animated_image,
+                    on_click=lambda e: print("Banner clicked!"),
+                    ink=True,
+                ),
+                ft.Container(
+                    padding=ft.padding.symmetric(vertical=10),
+                    content=dots
+                ),
+            ]
+        )
+        start_timer()
+
+        return carousel
+
     nav_bar = ft.AppBar(
         bgcolor="#005B7A",
     )
     page.appbar = nav_bar
     page.navigation_bar = create_footer(page)
+
     container = ft.Container(
         padding=ft.padding.all(0),
         content=ft.Column(
@@ -237,7 +318,7 @@ def ViewHome(page):
                 ),
                 ft.Column(
                     scroll=ft.ScrollMode.HIDDEN,
-                    spacing=5,
+                    spacing=0,
                     expand=True,
                     controls=[
                         ft.Container(
@@ -265,98 +346,7 @@ def ViewHome(page):
                                 ],
                             )
                         ),
-
-                        ft.Row(
-                            scroll=ft.ScrollMode.ALWAYS,
-                            controls=[
-                                ft.Container(
-                                    bgcolor=ft.Colors.GREY_100,
-                                    width=360,
-                                    height=180,
-                                    border_radius=ft.border_radius.all(10),
-                                    content=ft.Row(
-                                        alignment="center",
-                                        controls=[
-                                            ft.Column(
-                                                spacing=0,
-                                                controls=[
-                                                    ft.Text("Los mas ", color=ft.Colors.BLACK,
-                                                            size=40, weight=ft.FontWeight.W_700),
-                                                    ft.Text("vendidos", color=ft.Colors.BLACK,
-                                                            size=40, weight=ft.FontWeight.W_700),
-                                                ]
-                                            ),
-                                            ft.Column(
-                                              spacing=0,
-                                              expand=True,
-                                                controls=[
-                                                    
-                                                    ft.Image(src="registro_civil/1.jpg",
-                                                             width=100, height=100),
-                                                    ft.Text("Copia de Registro civil de Nacimiento", color=ft.Colors.BLACK,
-                                                            size=10, weight=ft.FontWeight.W_700),
-                                                ]
-                                            ),
-                                        ]
-                                    )
-                                ),
-                                ft.Container(
-                                    bgcolor=ft.Colors.GREY_100,
-                                    width=360,
-                                    height=180,
-                                    border_radius=ft.border_radius.all(10),
-                                    content=ft.Row(
-                                        alignment="center",
-                                        controls=[
-                                            ft.Column(
-
-                                                controls=[
-                                                    ft.Text("Firma ", color=ft.Colors.BLACK,
-                                                            size=40, weight=ft.FontWeight.W_700),
-                                                    ft.Text("Electronica", color=ft.Colors.BLACK,
-                                                            size=40, weight=ft.FontWeight.W_700),
-                                                ]
-                                            ),
-                                            ft.Column(
-                                                controls=[
-                                                    ft.Text("", color=ft.Colors.BLACK,
-                                                            size=40, weight=ft.FontWeight.W_700),
-                                                    ft.Image(src="Autenticacion/1.jpeg",
-                                                             width=100, height=100),
-                                                ]
-                                            ),
-                                        ]
-                                    )
-                                ),
-                                ft.Container(
-                                    bgcolor=ft.Colors.GREY_100,
-                                    width=360,
-                                    height=180,
-                                    border_radius=ft.border_radius.all(10),
-                                    content=ft.Row(
-                                        alignment="center",
-                                        controls=[
-                                            ft.Column(
-
-                                                controls=[
-                                                    ft.Text("Domicilio ", color=ft.Colors.BLACK,
-                                                            size=40, weight=ft.FontWeight.W_700),
-                                                    ft.Text("Recien Nacido", color=ft.Colors.BLACK,
-                                                            size=40, weight=ft.FontWeight.W_700),
-                                                ]
-                                            ),
-                                            ft.Column(
-                                                controls=[
-                                                    ft.Text("", color=ft.Colors.BLACK,
-                                                            size=40, weight=ft.FontWeight.W_700),
-                                                    ft.Image(src="registro_civil/3.jpeg",
-                                                             width=100, height=100),
-                                                ]
-                                            ),
-                                        ]
-                                    )
-                                ),
-                            ]),
+                        create_carousel(page),
                         ft.Container(
                             content=ft.Column(
                                 spacing=5,

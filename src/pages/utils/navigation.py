@@ -44,10 +44,10 @@ def get_route_from_index(page, index, footer=False):
 def create_navbar(page, drawer):
     
     return ft.AppBar(
-        bgcolor=ft.colors.WHITE,
+        bgcolor=ft.Colors.WHITE,
         elevation_on_scroll=0,
         leading=ft.IconButton(
-            ft.icons.MENU, icon_size=30, on_click=lambda e: page.open(drawer), icon_color="#E62514"),
+            ft.Icons.MENU, icon_size=30, on_click=lambda e: page.open(drawer), icon_color="#E62514"),
         title=ft.Image(src="logo-blanco.png", width=60, height=60),
         center_title=True,
         
@@ -57,12 +57,12 @@ def create_navbar(page, drawer):
 def create_appbar_init(page, request_permission):
     page.controls.clear()
     return ft.AppBar(
-        bgcolor=ft.colors.WHITE,
+        bgcolor=ft.Colors.WHITE,
         elevation_on_scroll=0,
         elevation=0,
         actions=[
             ft.IconButton(
-                ft.icons.NOTIFICATIONS,
+                ft.Icons.NOTIFICATIONS,
                 icon_size=30,
                 icon_color="#E62514",
                 on_click=lambda _: request_permission(_)
@@ -78,9 +78,9 @@ def create_appbar(page):
     button_back = "/login" if is_forgot_password else "/"
 
     return ft.AppBar(
-        bgcolor=ft.colors.WHITE,
+        bgcolor=ft.Colors.WHITE,
         leading=ft.IconButton(
-            icon=ft.icons.ARROW_BACK_OUTLINED,
+            icon=ft.Icons.ARROW_BACK_OUTLINED,
             icon_size=20,
             on_click=lambda e: page.go(button_back),
             icon_color="#E62514",
@@ -88,7 +88,7 @@ def create_appbar(page):
         # title=ft.Text(
         #     title_text,
         #     size=15,
-        #     color=ft.colors.WHITE,
+        #     color=ft.Colors.WHITE,
         #     text_align="center",
         #     weight=ft.FontWeight.BOLD,
         #     font_family="Heavitas",
@@ -98,12 +98,12 @@ def create_appbar(page):
         #         content=ft.Text(
         #             button_text,
         #             size=13,
-        #             color=ft.colors.WHITE,
+        #             color=ft.Colors.WHITE,
         #             weight=ft.FontWeight.BOLD
         #         ),
         #         padding=ft.padding.symmetric(horizontal=15, vertical=8),
         #         border_radius=ft.border_radius.all(5),
-        #         bgcolor=ft.colors.with_opacity(0.2, ft.colors.WHITE),
+        #         bgcolor=ft.Colors.with_opacity(0.2, ft.Colors.WHITE),
         #         ink=True,
         #         on_click=lambda _: page.go(button_action),  # Cambia de login, registro o iniciar sesión
         #     ),
@@ -124,18 +124,18 @@ def create_footer(page):
         inactive_color=ft.Colors.BLACK54,
         destinations=[
             ft.NavigationBarDestination(
-                icon=ft.icons.HOME,
-                selected_icon=ft.icons.HOME_OUTLINED,
+                icon=ft.Icons.HOME,
+                selected_icon=ft.Icons.HOME_OUTLINED,
                 bgcolor="#E62514",
             ),
             ft.NavigationBarDestination(
-                icon=ft.icons.BOY,
-                selected_icon=ft.icons.BOY,
+                icon=ft.Icons.BOY,
+                selected_icon=ft.Icons.BOY,
                 bgcolor="#E62514",
             ),
             ft.NavigationBarDestination(
-                icon=ft.icons.SHOPPING_CART_OUTLINED,
-                selected_icon=ft.icons.SHOPPING_CART_OUTLINED,
+                icon=ft.Icons.SHOPPING_CART_OUTLINED,
+                selected_icon=ft.Icons.SHOPPING_CART_OUTLINED,
                 bgcolor="#E62514",
             ),
 
@@ -158,7 +158,7 @@ def create_drawer(page):
                 content=ft.Row(
                     controls=[
                         ft.Icon(
-                            color=ft.colors.TRANSPARENT,),
+                            color=ft.Colors.TRANSPARENT,),
                         ft.Container(
                             content=ft.Image(
                                 src="icon.png",
@@ -169,7 +169,7 @@ def create_drawer(page):
                             expand=True,
                         ),
                         ft.IconButton(
-                            icon=ft.icons.CLOSE,
+                            icon=ft.Icons.CLOSE,
                             on_click=lambda e: page.close(page.drawer),
                         ),
                     ],
@@ -179,19 +179,19 @@ def create_drawer(page):
             ),
             ft.Divider(thickness=3),
             ft.NavigationDrawerDestination(
-                icon_content=ft.Icon(ft.icons.HOME),
+                icon_content=ft.Icon(ft.Icons.HOME),
                 label="Inicio",
-                selected_icon=ft.icons.HOME_OUTLINED,
+                selected_icon=ft.Icons.HOME_OUTLINED,
             ),
             ft.NavigationDrawerDestination(
-                icon_content=ft.Icon(ft.icons.INVENTORY),
+                icon_content=ft.Icon(ft.Icons.INVENTORY),
                 label="Inventario P03",
-                selected_icon=ft.icons.INVENTORY_OUTLINED,
+                selected_icon=ft.Icons.INVENTORY_OUTLINED,
             ),
             ft.NavigationDrawerDestination(
-                icon_content=ft.Icon(ft.icons.INVENTORY_2),
+                icon_content=ft.Icon(ft.Icons.INVENTORY_2),
                 label="Saldo Planta P03",
-                selected_icon=ft.icons.INVENTORY_2_OUTLINED,
+                selected_icon=ft.Icons.INVENTORY_2_OUTLINED,
             ),
             ft.Container(
                 height=page.window.height-300,
