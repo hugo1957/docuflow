@@ -26,3 +26,10 @@ copyright = "Copyright (C) 2024 by Flet"
 
 [tool.flet.app]
 path = "src"
+
+[tool.flet.splash]
+color = "#005B7A" # --splash-color
+dark_color = "#005B7A" # --splash-dark-color
+web = false # --no-web-splash
+ios = false # --no-ios-splash
+android = false # --no-android-splash

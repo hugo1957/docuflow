@@ -2,9 +2,10 @@ import flet as ft
 
 def get_drawer_selected_index(route):
     route_to_index = {
-        "/home": 0,
+        "/": 0,
         "/inventario": 1,
         "/saldo-planta": 2,
+        "/contacto": 3,
     }
     return route_to_index.get(route, 0)
 
@@ -14,6 +15,7 @@ def get_footer_selected_index(route):
         "/home": 0,
         "/inventario": 1,
         "/saldo-planta": 2,
+        "/contacto": 3,
     }
     return route_to_index.get(route, 0)
 
@@ -23,15 +25,17 @@ def get_route_from_index(page, index, footer=False):
         page.close(page.drawer)
 
     drawer_routes = [
-        "/home",
+        "/",
         "/inventario",
         "/saldo-planta",
+        "/contacto",
     ]
 
     footer_routes = [
-        "/home",
+        "/",
         "/inventario",
         "/saldo-planta",
+        "/contacto",
     ]
     routes = footer_routes if footer else drawer_routes
     return routes[index] if index < len(routes) else "/home"
@@ -116,8 +120,8 @@ def create_footer(page):
         on_change=lambda e: page.go(get_route_from_index(
             page, e.control.selected_index, footer=True)),
         selected_index=get_footer_selected_index(page.route),
-        active_color="#E62514",
-        inactive_color="#AC1A17",
+        active_color=ft.Colors.BLACK,
+        inactive_color=ft.Colors.BLACK54,
         destinations=[
             ft.NavigationBarDestination(
                 icon=ft.icons.HOME,
@@ -125,20 +129,16 @@ def create_footer(page):
                 bgcolor="#E62514",
             ),
             ft.NavigationBarDestination(
-                icon=ft.icons.CARD_GIFTCARD,
-                selected_icon=ft.icons.CARD_GIFTCARD_OUTLINED,
+                icon=ft.icons.BOY,
+                selected_icon=ft.icons.BOY,
                 bgcolor="#E62514",
             ),
             ft.NavigationBarDestination(
-                icon=ft.icons.WORK,
-                selected_icon=ft.icons.WORK_OUTLINED,
+                icon=ft.icons.SHOPPING_CART_OUTLINED,
+                selected_icon=ft.icons.SHOPPING_CART_OUTLINED,
                 bgcolor="#E62514",
             ),
-            ft.NavigationBarDestination(
-                icon=ft.icons.CONTACT_PAGE,
-                selected_icon=ft.icons.CONTACT_PAGE_OUTLINED,
-                bgcolor="#E62514",
-            ),
+
         ]
     )
 
@@ -214,26 +214,3 @@ def create_drawer(page):
         ]
     )
 
-
-def pagination(page, update_table, page_number, search_term):
-    def next_page(e):
-        nonlocal page_number
-        page_number += 1
-        update_table(page_number, search_term)
-
-    def previous_page(e):
-        nonlocal page_number
-        if page_number > 1:
-            page_number -= 1
-        update_table(page_number, search_term)
-
-    return ft.Row(
-        controls=[
-            ft.ElevatedButton(text="Anterior", on_click=previous_page, style=ft.ButtonStyle(
-                color="#E62514", elevation=2)),
-            ft.Container(),
-            ft.ElevatedButton(text="Siguiente", on_click=next_page, style=ft.ButtonStyle(
-                color="#E62514", elevation=2))
-        ],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-    )
