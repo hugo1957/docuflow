@@ -1,155 +1,44 @@
 import flet as ft
-import threading
-import json
-from pages.utils.json import json_base64
 from pages.utils.navigation import create_footer
 from threading import Timer
-
-
+from fletcarousel import BasicAnimatedHorizontalCarousel, HintLine, AutoCycle
+from pages.utils.navigation import create_navbar_home
 def ViewHome(page):
-    nav_bar = ft.AppBar(
-        bgcolor="#005B7A",
-    )
-    page.appbar = nav_bar
+    page.controls.clear()
+    page.appbar = create_navbar_home(page)
     page.navigation_bar = create_footer(page)
 
-    def open_dlg(e, text):
-        def show_loader():
-            if not e.control.page.overlay:
-                dlg = ft.AlertDialog(
-                    content=ft.ProgressRing(
-                        width=50, height=50, stroke_width=5),
-                    title=ft.Text("Cargando...")
-                )
-                e.control.page.overlay.append(dlg)
-                dlg.open = True
-                page.update()
-
-        def load_dialog():
-            dlg = ft.AlertDialog(
-                title=ft.Text(text),
-                actions=[
-                    ft.TextButton(
-                        "Cerrar", on_click=lambda e: close_dialog(dlg))
-                ],
-            )
-            if e.control.page.overlay:
-                e.control.page.overlay.pop()
-            e.control.page.overlay.append(dlg)
-            dlg.open = True
-            page.update()
-
-        def close_dialog(dlg):
-            dlg.open = False
-            page.update()
-        threading.Thread(target=load_dialog).start()
-        threading.Timer(0.5, show_loader).start()
-
     def create_carousel(page):
-        # Lista de imágenes
-        images = [
-            {"src": "banner/1.png", "alt": "Banner 1"},
-            {"src": "Autenticacion/1.jpeg", "alt": "Banner 2"},
-            {"src": "banner/2.png", "alt": "Banner 3"},
-        ]
-
-        # Índice para la imagen activa
-        active_index = 0
-
-        # Imagen animada
-        animated_image = ft.AnimatedSwitcher(
-            ft.Container(
-                content=ft.Image(
-                    src=images[0]["src"],
-                    width="100%",
-                    height="100%",
-                    fit=ft.ImageFit.CONTAIN,  # Ocupa todo el contenedor
-                ),
-                width="100%",
-                height=200,
-                border_radius=ft.border_radius.all(15),  # Bordes redondeados
-                clip_behavior=ft.ClipBehavior.HARD_EDGE,  # Recorta contenido fuera de bordes
+        return BasicAnimatedHorizontalCarousel(
+            page=page,
+            auto_cycle=AutoCycle(duration=5),
+            expand=True,
+            padding=0,
+            hint_lines=HintLine(
+                active_color="red",
+                inactive_color="gray",
+                alignment=ft.MainAxisAlignment.CENTER,
+                max_list_size=400,
+                size=4,
             ),
-            duration=500,  # Duración de la animación (ms)
-            transition=ft.AnimatedSwitcherTransition.FADE,
-        )
-
-        # Función para actualizar el carrusel
-        def update_carousel(index=None):
-            nonlocal active_index
-            if index is None:  # Cambio automático
-                active_index = (active_index + 1) % len(images)
-            else:  # Cambio manual
-                active_index = index
-
-            # Actualizar imagen animada
-            animated_image.content = ft.Container(
-                content=ft.Image(
-                    src=images[active_index]["src"],
-
-                    fit=ft.ImageFit.COVER,  # Ocupa todo el contenedor
-                ),
-                width=page.window.width,
-                height=200,
-                border_radius=ft.border_radius.all(15),
-                clip_behavior=ft.ClipBehavior.HARD_EDGE,
-            )
-            update_dots()
-            page.update()
-
-        # Función para actualizar los puntos
-        def update_dots():
-            for i, dot in enumerate(dots.controls):
-                dot.bgcolor = "#007BFF" if i == active_index else "#CCCCCC"
-
-        # Temporizador para el cambio automático de imágenes
-        def start_timer():
-            def auto_update():
-                update_carousel()
-                start_timer()  # Reinicia el temporizador
-
-            Timer(4.0, auto_update).start()  # Cambia la imagen cada 2 segundos
-
-        # Controles de puntos
-        dots = ft.Row(
-            alignment=ft.MainAxisAlignment.CENTER,
-            controls=[
+            items=[
                 ft.Container(
-                    width=10,
-                    height=10,
-                    border_radius=50,
-                    bgcolor="#007BFF" if i == active_index else "#CCCCCC",
-                    on_click=lambda e, i=i: update_carousel(i),
+                    content=ft.Image(
+                        src=f"banner/{i}.png",
+                        fit=ft.ImageFit.COVER,
+                    ),
+                    height=200,
+                    expand=True,
+                    width=page.window.width,
+                    bgcolor="white",
+                    border_radius=15,
+                    alignment=ft.alignment.center,
                 )
-                for i in range(len(images))
+                for i in range(1, 4)
             ],
         )
 
-        carousel = ft.Container(
-            width=page.window.width,
-            content=ft.Column(
-                expand=True,
-                alignment=ft.MainAxisAlignment.CENTER,
-                controls=[
-                    ft.Container(
-                        width=page.window.width,
-                        height=200,
-                        content=animated_image,  # Imagen animada
-                    ),
-                    ft.Container(
-                        alignment=ft.alignment.center,
-                        padding=ft.padding.symmetric(vertical=10),
-                        content=dots,  # Puntos centrados
-                    ),
-                ],
-            ),
-        )
-
-        start_timer()
-        return carousel
-
     def create_tab_content(index):
-
         categories = [
             "Registro Civil",
             "Autenticación",
@@ -162,73 +51,107 @@ def ViewHome(page):
             autenticacion_content(),
             escrituras_content(),
             matrimonio_divorcio_content(),
-
             declaraciones_juramentadas_content(),
         ]
         return contents[index]
 
     def update_tab_content(e):
-        selected_tab = e.control.selected_index
-        dynamic_content.content = create_tab_content(selected_tab)
-        dynamic_content.update()
+        selected_index = e.control.selected_index if e else 0
+        for i, tab in enumerate(tabs.tabs):
+            container = tab.tab_content
+            column = container.content
+            text = column.controls[0]
+
+            if i == selected_index:
+                container.bgcolor = "#e5bc16"
+                text.color = ft.Colors.WHITE
+            else:
+                container.bgcolor = None
+                text.color = ft.Colors.BLACK
+
+        dynamic_content.content = create_tab_content(selected_index)
+        page.update()
 
     tabs = ft.Tabs(
         selected_index=0,
         on_change=update_tab_content,
-        indicator_color=ft.colors.TRANSPARENT,
+        indicator_color="#e5bc16",
         indicator_border_radius=ft.border_radius.all(10),
-        label_color="#e5bc16",
         scrollable=True,
+        indicator_tab_size=False,
+        overlay_color="transparent",
         tabs=[
             ft.Tab(
-                tab_content=ft.Column(
-                    controls=[
-                        ft.Text("Registro Civil", size=15),
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER,
+                tab_content=ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Text("Registro Civil", size=15, color=ft.Colors.BLACK),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    alignment=ft.alignment.center,
+                    padding=ft.padding.symmetric(horizontal=10, vertical=5),
+                    border_radius=ft.border_radius.all(10),
                 )
             ),
             ft.Tab(
-                tab_content=ft.Column(
-                    controls=[
-                        ft.Text("Autenticación", size=15),
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER,
+                tab_content=ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Text("Autenticación", size=15, color=ft.Colors.BLACK),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    alignment=ft.alignment.center,
+                    padding=ft.padding.symmetric(horizontal=10, vertical=5),
+                    border_radius=ft.border_radius.all(10),
                 )
             ),
             ft.Tab(
-                tab_content=ft.Column(
-                    controls=[
-                        ft.Text("Escrituras", size=15),
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER,
+                tab_content=ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Text("Escrituras", size=15, color=ft.Colors.BLACK),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    alignment=ft.alignment.center,
+                    padding=ft.padding.symmetric(horizontal=10, vertical=5),
+                    border_radius=ft.border_radius.all(10),
                 )
             ),
             ft.Tab(
-                tab_content=ft.Column(
-                    controls=[
-                        ft.Text("Matrimonio y Divorcio", size=15),
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER,
+                tab_content=ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Text("Matrimonio y Divorcio", size=15, color=ft.Colors.BLACK),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    alignment=ft.alignment.center,
+                    padding=ft.padding.symmetric(horizontal=10, vertical=5),
+                    border_radius=ft.border_radius.all(10),
                 )
             ),
             ft.Tab(
-                tab_content=ft.Column(
-                    controls=[
-                        ft.Text("Declaraciones", size=15),
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER,
+                tab_content=ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Text("Declaraciones", size=15, color=ft.Colors.BLACK),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    alignment=ft.alignment.center,
+                    padding=ft.padding.symmetric(horizontal=10, vertical=5),
+                    border_radius=ft.border_radius.all(10),
                 )
             ),
         ],
     )
-
     dynamic_content = ft.Container(content=create_tab_content(0))
-
     container = ft.Container(
         padding=ft.padding.all(0),
         content=ft.Column(
-
             spacing=0,
             controls=[
                 ft.Container(
@@ -251,8 +174,7 @@ def ViewHome(page):
                             width="100%",
                             height=50,
                             padding=ft.padding.all(10),
-                            on_click=lambda e: print(
-                                "Clickable without Ink clicked!"),
+                            on_click=lambda e: print("Clickable without Ink clicked!"),
                             ink=True,
                             content=ft.Row(
                                 spacing=5,
@@ -269,65 +191,74 @@ def ViewHome(page):
                                         ),
                                     ),
                                 ],
-                            )
+                            ),
                         ),
-                        ft.Container(content=create_carousel(
-                            page), padding=ft.padding.all(15)),
+                        ft.Container(
+                            expand=True,
+                            width=page.window.width,
+                            content=create_carousel(page),
+                            padding=ft.padding.all(15),
+                        ),
                         tabs,
                         dynamic_content,
-                    ]
-                )
-            ]
-        )
+                    ],
+                ),
+            ],
+        ),
     )
     return container
 
 
-def create_content(image, name, valor, url):
-    return ft.Container(
-        width=180,
-        height=260,
-        content=ft.Column(
-            alignment=ft.MainAxisAlignment.START,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            controls=[
-                ft.Container(
-                    padding=ft.padding.all(0),
-                    alignment=ft.alignment.top_right,
-                    content=ft.IconButton(
-                        icon=ft.Icons.SHOPPING_CART_OUTLINED,
-                        icon_color="#FFBC03",
-                        icon_size=20,
-                        tooltip="Agregar al carrito",
 
-                    ),
-                ),
-                ft.Container(
-                    expand=True,
-                    padding=ft.padding.all(0),
-                    border_radius=ft.border_radius.all(100),
-                    content=ft.Image(
-                        src=image,
-                        width=120,
-                        height=120,
-                    ),
-                ),
-                ft.Text(
-                    name,
-                    size=15,
-                    weight=ft.FontWeight.BOLD,
-                    color=ft.Colors.BLACK,
-                ),
-                ft.Text(
-                    f"Valor: {valor}",
-                    size=12,
-                    color=ft.Colors.BLACK54,
-                ),
-            ],
-        ),
+def create_content(image, name, valor, rating):
+    return ft.Container(
+        width=200,
+        height=300,
+        expand=True,
         padding=ft.padding.all(10),
-        border_radius=ft.border_radius.all(10),
-        bgcolor=ft.Colors.BLUE,
+        border_radius=ft.border_radius.all(15),
+        bgcolor=ft.Colors.GREY_100,
+        content=ft.Column(
+            controls=[
+
+                ft.Stack(
+                    [
+                        ft.Image(
+                            src=image,
+                            width=200,
+                            height=140,
+                            fit=ft.ImageFit.COVER,
+                            border_radius=ft.border_radius.all(15),
+                        ),
+
+                    ]
+                ),
+                # Texto principal
+                ft.Text(name, weight=ft.FontWeight.BOLD, size=18),
+                ft.Text("Deep Foam", size=14, color="#717171"),
+                # Precio y botón
+                ft.Row(
+                    controls=[
+                        ft.Text(f"${valor}", size=18, weight=ft.FontWeight.BOLD),
+                        ft.Container(
+                            content=ft.IconButton(
+                                icon=ft.Icons.SHOPPING_CART_OUTLINED,
+                                icon_color=ft.Colors.WHITE,
+                                bgcolor="#D69F7E",
+                                on_click=lambda e: print(f"Agregado al carrito: {name}"),
+                            ),
+                            border_radius=ft.border_radius.all(8),
+                            width=40,
+                            height=40,
+                            bgcolor="#D69F7E",
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ),
+                
+            ],
+            spacing=10,
+        ),
     )
 
 

@@ -4,7 +4,7 @@ def get_drawer_selected_index(route):
     route_to_index = {
         "/": 0,
         "/profile": 1,
-        "/saldo-planta": 2,
+        "/product-detail": 2,
         "/contacto": 3,
     }
     return route_to_index.get(route, 0)
@@ -14,7 +14,7 @@ def get_footer_selected_index(route):
     route_to_index = {
         "/home": 0,
         "/profile": 1,
-        "/saldo-planta": 2,
+        "/product-detail": 2,
         "/contacto": 3,
     }
     return route_to_index.get(route, 0)
@@ -27,31 +27,79 @@ def get_route_from_index(page, index, footer=False):
     drawer_routes = [
         "/",
         "/profile",
-        "/saldo-planta",
+        "/product-detail",
         "/contacto",
     ]
 
     footer_routes = [
         "/",
         "/profile",
-        "/saldo-planta",
+        "/product-detail",
         "/contacto",
     ]
     routes = footer_routes if footer else drawer_routes
     return routes[index] if index < len(routes) else "/home"
 
 
-def create_navbar(page, drawer):
-    
-    return ft.AppBar(
-        bgcolor=ft.Colors.WHITE,
-        elevation_on_scroll=0,
-        leading=ft.IconButton(
-            ft.Icons.MENU, icon_size=30, on_click=lambda e: page.open(drawer), icon_color="#E62514"),
-        title=ft.Image(src="logo-blanco.png", width=60, height=60),
-        center_title=True,
-        
+def create_navbar_home(page):
+    cart_count = ft.Text("0", color="white", size=12, weight=ft.FontWeight.BOLD)
+
+    # Icono de carrito con contador
+    cart_icon = ft.Container(
+        content=ft.Stack(
+            [
+                ft.Icon(ft.Icons.SHOPPING_CART, color="white", size=24),
+                ft.Container(
+                    content=cart_count,
+                    bgcolor="red",
+                    border_radius=ft.border_radius.all(12),
+                    padding=ft.padding.symmetric(horizontal=6, vertical=2),
+                    alignment=ft.alignment.center,
+                    width=20,
+                    height=20,
+                    offset=ft.Offset(0.8, -0.6), 
+                ),
+            ]
+        ),
+        alignment=ft.alignment.center,  
+        padding=ft.padding.only(right=20), 
+        on_click=lambda e: print("Carrito abierto"),
     )
+    nav_bar = ft.AppBar(
+        title=ft.Text("DocuFlow", color="white"),
+        bgcolor="#005B7A",
+        actions=[cart_icon],
+    )
+    return nav_bar
+
+def create_navbar_product(page):
+    is_favorite = [False]
+
+    def toggle_favorite(e):
+        is_favorite[0] = not is_favorite[0]
+        heart_icon.icon = ft.Icons.FAVORITE if is_favorite[0] else ft.Icons.FAVORITE_BORDER
+        heart_icon.style = ft.ButtonStyle(
+            icon_color="red" if is_favorite[0] else "black"
+        )
+        page.update()
+
+    heart_icon = ft.IconButton(
+        icon=ft.Icons.FAVORITE_BORDER,
+        style=ft.ButtonStyle(icon_color="black"),
+        icon_size=24,
+        on_click=toggle_favorite,
+    )
+
+    nav_bar = ft.AppBar(
+        leading=ft.IconButton(
+            icon=ft.Icons.ARROW_BACK,
+            on_click=lambda e: page.go("/"),
+        ),
+        bgcolor=ft.Colors.WHITE,
+        actions=[heart_icon],
+    )
+    return nav_bar
+
 
 
 def create_appbar_init(page, request_permission):

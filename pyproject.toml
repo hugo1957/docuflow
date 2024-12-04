@@ -5,7 +5,10 @@ description = ""
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
-  "flet==0.25.1"
+  "flet==0.25.1",
+  "fletcarousel",
+  "flet_core",
+  "pydantic",
 ]
 
 
