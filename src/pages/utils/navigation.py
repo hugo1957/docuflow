@@ -3,7 +3,7 @@ import flet as ft
 def get_drawer_selected_index(route):
     route_to_index = {
         "/": 0,
-        "/inventario": 1,
+        "/profile": 1,
         "/saldo-planta": 2,
         "/contacto": 3,
     }
@@ -13,7 +13,7 @@ def get_drawer_selected_index(route):
 def get_footer_selected_index(route):
     route_to_index = {
         "/home": 0,
-        "/inventario": 1,
+        "/profile": 1,
         "/saldo-planta": 2,
         "/contacto": 3,
     }
@@ -26,14 +26,14 @@ def get_route_from_index(page, index, footer=False):
 
     drawer_routes = [
         "/",
-        "/inventario",
+        "/profile",
         "/saldo-planta",
         "/contacto",
     ]
 
     footer_routes = [
         "/",
-        "/inventario",
+        "/profile",
         "/saldo-planta",
         "/contacto",
     ]
