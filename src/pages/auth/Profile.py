@@ -12,29 +12,29 @@ def ViewProfile(page):
     document_field = create_input_field("Número de Identificación")
     email_field = create_input_field("E-mail")
     phone_field = create_input_field("Celular")
+    register_number_field = create_input_field("Número de Registro Civil")
+    city_field = create_input_field("Ciudad expedición")
+    deparment_field = create_input_field("Departamento")
+    notaria_registraduria = create_input_field(
+        "Notaria, Numero ó Registraduria")
 
     def on_date_change(e):
         selected_date = e.control.value.strftime("%Y-%m-%d")
         birth_date_field.value = selected_date
         page.update()
 
-    birth_date_field = ft.Column(
-        controls=[
-            ft.Text("Fecha de Nacimiento",
-                    style=ft.TextStyle(color="#717171")),
-            ft.TextField(
-                width=300,
-                height=40,
-                border_radius=ft.border_radius.all(15),
-                content_padding=ft.padding.symmetric(
-                    horizontal=20, vertical=15),
-                bgcolor=ft.Colors.WHITE,
-                border_color="#717171",
-                label_style=ft.TextStyle(color="#717171"),
-                border_width=0.5,
-                value="",
-            )
-        ]
+    birth_date_field = ft.TextField(
+        width=300,
+        height=40,
+        border_radius=ft.border_radius.all(15),
+        content_padding=ft.padding.symmetric(
+            horizontal=20, vertical=15),
+        bgcolor=ft.Colors.WHITE,
+        border_color="#717171",
+        label_style=ft.TextStyle(color="#717171"),
+        border_width=0.5,
+        value="",
+        expand=True,
     )
 
     # Contenedor principal
@@ -49,7 +49,7 @@ def ViewProfile(page):
                 content=ft.Column(
                     controls=[
                         ft.Column(
-                          expand=True,
+                            expand=True,
                             scroll=ft.ScrollMode.HIDDEN,
                             spacing=5,
                             controls=[
@@ -62,28 +62,37 @@ def ViewProfile(page):
                                 document_field,
                                 email_field,
                                 phone_field,
-                                ft.Row(
-                                    controls=[
-                                        birth_date_field,
-                                        ft.IconButton(
-                                            icon=ft.Icons.CALENDAR_MONTH,
-                                            on_click=lambda e: page.open(
-                                                ft.DatePicker(
-                                                    first_date=datetime.datetime(
-                                                        year=2023, month=10, day=1),
-                                                    last_date=datetime.datetime(
-                                                        year=2024, month=10, day=1),
-                                                    on_change=on_date_change,
-                                                )
-                                            ),
-                                        ),
-                                    ],
-                                    alignment=ft.MainAxisAlignment.CENTER,
-                                ),
+                                ft.Column(
+            controls=[
+                ft.Text("Fecha de Nacimiento", style=ft.TextStyle(color="#717171")),
+                ft.Row(
+                    controls=[
+                        birth_date_field,
+                        ft.IconButton(
+                            icon=ft.Icons.CALENDAR_MONTH,
+                            icon_color="blue",
+                            on_click=lambda e: page.open(
+                                ft.DatePicker(
+                                    first_date=datetime.datetime(year=2023, month=10, day=1),
+                                    last_date=datetime.datetime(year=2024, month=10, day=1),
+                                    on_change=on_date_change,
+                                )
+                            ),
+                        ),
+                    ],
+                    
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,  # Alinea verticalmente los elementos
+                ),
+            ],
+            spacing=10,
+        ),
                                 ft.Container(height=5),
                                 ft.Text(
                                     "Para mas DocuFlow", text_align="left", size=20, weight="bold"),
-
+                                register_number_field,
+                                city_field,
+                                deparment_field,
+                                notaria_registraduria,
                             ]
                         ),
                         ft.Container(
