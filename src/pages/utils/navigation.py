@@ -40,7 +40,6 @@ def get_route_from_index(page, index, footer=False):
     routes = footer_routes if footer else drawer_routes
     return routes[index] if index < len(routes) else "/home"
 
-
 def create_navbar_home(page):
     cart_count = ft.Text("0", color="white", size=12, weight=ft.FontWeight.BOLD)
 
@@ -53,18 +52,19 @@ def create_navbar_home(page):
                     content=cart_count,
                     bgcolor="red",
                     border_radius=ft.border_radius.all(12),
-                    padding=ft.padding.symmetric(horizontal=6, vertical=2),
+                    padding=ft.padding.all(0),  # Usar padding consistente
                     alignment=ft.alignment.center,
-                    width=20,
-                    height=20,
-                    offset=ft.Offset(0.8, -0.6), 
+                    width=24,  # Ancho fijo
+                    height=24,  # Alto fijo
+                    offset=ft.Offset(0.8, -0.6),
                 ),
             ]
         ),
-        alignment=ft.alignment.center,  
-        padding=ft.padding.only(right=20), 
-        on_click=lambda e: print("Carrito abierto"),
+        alignment=ft.alignment.center,
+        padding=ft.padding.only(right=20),
+        on_click=lambda e: page.go("/cart"),
     )
+
     nav_bar = ft.AppBar(
         title=ft.Text("DocuFlow", color="white"),
         bgcolor="#005B7A",
@@ -72,22 +72,41 @@ def create_navbar_home(page):
     )
     return nav_bar
 
+
 def create_navbar_product(page):
-    is_favorite = [False]
 
-    def toggle_favorite(e):
-        is_favorite[0] = not is_favorite[0]
-        heart_icon.icon = ft.Icons.FAVORITE if is_favorite[0] else ft.Icons.FAVORITE_BORDER
-        heart_icon.style = ft.ButtonStyle(
-            icon_color="red" if is_favorite[0] else "black"
-        )
-        page.update()
+    cart = page.session.get("cart")
+    if cart is None:
+        cart = []
 
-    heart_icon = ft.IconButton(
-        icon=ft.Icons.FAVORITE_BORDER,
-        style=ft.ButtonStyle(icon_color="black"),
-        icon_size=24,
-        on_click=toggle_favorite,
+    cart_count_number = len(cart)
+    cart_count = ft.Text(
+        str(cart_count_number),
+        color="white",
+        size=12,
+        weight=ft.FontWeight.BOLD,
+    )
+
+    # Icono de carrito con contador
+    cart_icon = ft.Container(
+        content=ft.Stack(
+            [
+                ft.Icon(ft.Icons.SHOPPING_CART, color="black", size=24),
+                ft.Container(
+                    content=cart_count,
+                    bgcolor="red",
+                    border_radius=ft.border_radius.all(12),
+                    padding=ft.padding.all(0),  # Usar padding consistente
+                    alignment=ft.alignment.center,
+                    width=24,  # Ancho fijo
+                    height=24,  # Alto fijo
+                    offset=ft.Offset(0.8, -0.6),
+                ),
+            ]
+        ),
+        alignment=ft.alignment.center,
+        padding=ft.padding.only(right=20),
+        on_click=lambda e: page.go("/cart"),
     )
 
     nav_bar = ft.AppBar(
@@ -96,9 +115,11 @@ def create_navbar_product(page):
             on_click=lambda e: page.go("/"),
         ),
         bgcolor=ft.Colors.WHITE,
-        actions=[heart_icon],
+        actions=[cart_icon],
     )
     return nav_bar
+
+
 
 
 

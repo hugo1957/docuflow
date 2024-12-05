@@ -16,7 +16,9 @@ dependencies = [
 # org name in reverse domain name notation, e.g. "com.mycompany".
 # Combined with project.name to build bundle ID for iOS and Android apps
 org = "com.mycompany"
-
+compile.app = true # --compile-app (compile py files to pyc)
+compile.packages = true # --compile-packages (compile packages py files to pyc)
+compile.cleanup = true # --cleanup-on-compile ( remove unnecessary files )
 # project display name that is used as an app title on Android and iOS home screens,
 # shown in window titles and about app dialogs on desktop.
 product = "docuflow"

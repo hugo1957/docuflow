@@ -9,7 +9,7 @@ from pages.utils.json import json_base64
 from pages.utils.navigation import create_footer
 from pages.auth.Profile import ViewProfile
 from pages.ProductDetail import ViewProductDetail
-
+from pages.Cart import ViewCart
 
 def main(page: ft.Page):
     page.adaptive = False
@@ -64,18 +64,25 @@ def main(page: ft.Page):
         threading.Thread(target=wrapper).start()
 
     def handle_navigation(route):
-        page.controls.clear()
-
-        if route == "/":
-            load_view(lambda: page.add(ft.SafeArea(
-                content=ViewHome(page), expand=True)))
-        elif route == "/profile":
-            load_view(lambda: page.add(ft.SafeArea(
-                content=ViewProfile(page), expand=True)))
-        elif route == "/product-detail":
-            page.add(ft.SafeArea(
-                content=ViewProductDetail(page), expand=True))
-        page.update()
+      page.controls.clear()
+      if route == "/":
+          load_view(lambda: page.add(ft.SafeArea(
+              content=ViewHome(page), expand=True)))
+      elif route == "/profile":
+          load_view(lambda: page.add(ft.SafeArea(
+              content=ViewProfile(page), expand=True)))
+      elif re.match(r"^/product-detail/.+", route):
+          # Extraer el parámetro 'url' de la ruta
+          product_url = route[len("/product-detail/"):]
+          load_view(lambda: page.add(ft.SafeArea(
+              content=ViewProductDetail(page, product_url), expand=True)))
+      elif route == "/cart":
+          load_view(lambda: page.add(ft.SafeArea(
+              content=ViewCart(page), expand=True)))
+      else:
+          # Ruta no encontrada, puedes agregar una vista de 404 o redirigir a inicio
+          page.add(ft.Text("Página no encontrada"))
+      page.update()
 
     def route_change(e):
         handle_navigation(e.route)
