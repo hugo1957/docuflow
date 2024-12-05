@@ -2,7 +2,7 @@ import flet as ft
 
 def get_drawer_selected_index(route):
     route_to_index = {
-        "/": 0,
+        "/home": 0,
         "/profile": 1,
         "/product-detail": 2,
         "/contacto": 3,
@@ -25,14 +25,14 @@ def get_route_from_index(page, index, footer=False):
         page.close(page.drawer)
 
     drawer_routes = [
-        "/",
+        "/home",
         "/profile",
         "/product-detail",
         "/contacto",
     ]
 
     footer_routes = [
-        "/",
+        "/home",
         "/profile",
         "/product-detail",
         "/contacto",
@@ -41,9 +41,24 @@ def get_route_from_index(page, index, footer=False):
     return routes[index] if index < len(routes) else "/home"
 
 def create_navbar_home(page):
-    cart_count = ft.Text("0", color="white", size=12, weight=ft.FontWeight.BOLD)
+    def update_cart_count():
+        cart = page.session.get("cart")
+        if cart is None:
+            cart = []
+        cart_count.value = str(len(cart))
+        cart_count.update()
 
-    # Icono de carrito con contador
+    cart = page.session.get("cart")
+    if cart is None:
+        cart = []
+
+    cart_count = ft.Text(
+        str(len(cart)),
+        color="white",
+        size=12,
+        weight=ft.FontWeight.BOLD,
+    )
+
     cart_icon = ft.Container(
         content=ft.Stack(
             [
@@ -52,10 +67,10 @@ def create_navbar_home(page):
                     content=cart_count,
                     bgcolor="red",
                     border_radius=ft.border_radius.all(12),
-                    padding=ft.padding.all(0),  # Usar padding consistente
+                    padding=ft.padding.all(0),
                     alignment=ft.alignment.center,
-                    width=24,  # Ancho fijo
-                    height=24,  # Alto fijo
+                    width=24,
+                    height=24,
                     offset=ft.Offset(0.8, -0.6),
                 ),
             ]
@@ -70,24 +85,27 @@ def create_navbar_home(page):
         bgcolor="#005B7A",
         actions=[cart_icon],
     )
-    return nav_bar
-
+    return nav_bar, update_cart_count
 
 def create_navbar_product(page):
+    def update_cart_count():
+        cart = page.session.get("cart")
+        if cart is None:
+            cart = []
+        cart_count.value = str(len(cart))
+        cart_count.update()
 
     cart = page.session.get("cart")
     if cart is None:
         cart = []
 
-    cart_count_number = len(cart)
     cart_count = ft.Text(
-        str(cart_count_number),
+        str(len(cart)),
         color="white",
         size=12,
         weight=ft.FontWeight.BOLD,
     )
 
-    # Icono de carrito con contador
     cart_icon = ft.Container(
         content=ft.Stack(
             [
@@ -96,10 +114,10 @@ def create_navbar_product(page):
                     content=cart_count,
                     bgcolor="red",
                     border_radius=ft.border_radius.all(12),
-                    padding=ft.padding.all(0),  # Usar padding consistente
+                    padding=ft.padding.all(0),
                     alignment=ft.alignment.center,
-                    width=24,  # Ancho fijo
-                    height=24,  # Alto fijo
+                    width=24,
+                    height=24,
                     offset=ft.Offset(0.8, -0.6),
                 ),
             ]
@@ -117,10 +135,7 @@ def create_navbar_product(page):
         bgcolor=ft.Colors.WHITE,
         actions=[cart_icon],
     )
-    return nav_bar
-
-
-
+    return nav_bar, update_cart_count
 
 
 def create_appbar_init(page, request_permission):

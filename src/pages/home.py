@@ -7,38 +7,96 @@ from pages.utils.navigation import create_navbar_home
 
 def ViewHome(page):
     page.controls.clear()
-    page.appbar = create_navbar_home(page)
+    navbar, update_cart_count = create_navbar_home(page)
+    page.appbar = navbar
     page.navigation_bar = create_footer(page)
 
     def create_carousel(page):
-        return BasicAnimatedHorizontalCarousel(
-            page=page,
-            auto_cycle=AutoCycle(duration=8),
-            expand=True,
-            padding=0,
-            hint_lines=HintLine(
-                active_color="red",
-                inactive_color="gray",
-                alignment=ft.MainAxisAlignment.CENTER,
-                max_list_size=400,
-                size=4,
+        # Lista de imágenes
+        images = [
+            {"src": "banner/1.png", "alt": "Banner 1"},
+            {"src": "Autenticacion/1.jpeg", "alt": "Banner 2"},
+            {"src": "banner/2.png", "alt": "Banner 3"},
+        ]
+        active_index = 0
+
+        animated_image = ft.AnimatedSwitcher(
+            ft.Container(
+                content=ft.Image(
+                    src=images[0]["src"],
+                    width="100%",
+                    height="100%",
+                    fit=ft.ImageFit.CONTAIN,  # Ocupa todo el contenedor
+                ),
+                width="100%",
+                height=200,
+                border_radius=ft.border_radius.all(15),  
+                clip_behavior=ft.ClipBehavior.HARD_EDGE,
             ),
-            items=[
+            duration=500, 
+            transition=ft.AnimatedSwitcherTransition.FADE,
+        )
+        def update_carousel(index=None):
+            nonlocal active_index
+            if index is None:
+                active_index = (active_index + 1) % len(images)
+            else:  
+                active_index = index
+            animated_image.content = ft.Container(
+                content=ft.Image(
+                    src=images[active_index]["src"],
+                    fit=ft.ImageFit.COVER,
+                ),
+                width=page.window.width,
+                height=200,
+                border_radius=ft.border_radius.all(15),
+                clip_behavior=ft.ClipBehavior.HARD_EDGE,
+            )
+            update_dots()
+            page.update()
+        def update_dots():
+            for i, dot in enumerate(dots.controls):
+                dot.bgcolor = "#007BFF" if i == active_index else "#CCCCCC"
+        def start_timer():
+            def auto_update():
+                update_carousel()
+                start_timer() 
+            Timer(4.0, auto_update).start() 
+        dots = ft.Row(
+            alignment=ft.MainAxisAlignment.CENTER,
+            controls=[
                 ft.Container(
-                    content=ft.Image(
-                        src=f"banner/{i}.png",
-                        fit=ft.ImageFit.COVER,
-                    ),
-                    height=200,
-                    expand=True,
-                    width=page.window.width,
-                    bgcolor="white",
-                    border_radius=15,
-                    alignment=ft.alignment.center,
+                    width=10,
+                    height=10,
+                    border_radius=50,
+                    bgcolor="#007BFF" if i == active_index else "#CCCCCC",
+                    on_click=lambda e, i=i: update_carousel(i),
                 )
-                for i in range(1, 4)
+                for i in range(len(images))
             ],
         )
+
+        carousel = ft.Container(
+            width=page.window.width,
+            content=ft.Column(
+                expand=True,
+                alignment=ft.MainAxisAlignment.CENTER,
+                controls=[
+                    ft.Container(
+                        width=page.window.width,
+                        height=200,
+                        content=animated_image, 
+                    ),
+                    ft.Container(
+                        alignment=ft.alignment.center,
+                        padding=ft.padding.symmetric(vertical=10),
+                        content=dots, 
+                    ),
+                ],
+            ),
+        )
+        start_timer()
+        return carousel
 
     def create_tab_content(index):
         categories = [
@@ -243,21 +301,23 @@ def create_content(page, image, name, valor, url):
 
                     ]
                 ),
-                # Texto principal
-                ft.Text(name, weight=ft.FontWeight.BOLD, size=18),
+                ft.Text(
+                    name,
+                    weight=ft.FontWeight.BOLD,
+                    size=18,
+                    max_lines=2,
+                    overflow=ft.TextOverflow.ELLIPSIS,  
+                ),
                 ft.Text("Deep Foam", size=14, color="#717171"),
-                # Precio y botón
                 ft.Row(
                     controls=[
-                        ft.Text(f"${valor}", size=18,
-                                weight=ft.FontWeight.BOLD),
+                        ft.Text(f"${valor}", size=18, weight=ft.FontWeight.BOLD),
                         ft.Container(
                             content=ft.IconButton(
                                 icon=ft.Icons.SHOPPING_CART_OUTLINED,
                                 icon_color=ft.Colors.WHITE,
                                 bgcolor="#e5bc16",
-                                on_click=lambda e: page.go(
-                                    f"/product-detail/{url}"),
+                                on_click=lambda e: page.go(f"/product-detail/{url}"),
                             ),
                             border_radius=ft.border_radius.all(8),
                             width=40,
@@ -328,7 +388,12 @@ def registro_civil_content(page):
 
     return ft.Container(
         padding=ft.padding.all(5),
-        content=ft.Column(controls=rows),
+        alignment=ft.alignment.center,
+        content=ft.Column(controls=rows, expand=True,
+                          scroll=ft.ScrollMode.HIDDEN,
+                          alignment=ft.MainAxisAlignment.CENTER,
+                          horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                          spacing=10,),
     )
 
 
@@ -387,31 +452,54 @@ def autenticacion_content(page):
     # Crear el contenedor principal con las filas generadas
     return ft.Container(
         padding=ft.padding.all(5),
-        content=ft.Column(controls=rows),
+        alignment=ft.alignment.center,
+        content=ft.Column(controls=rows,expand=True,
+            scroll=ft.ScrollMode.HIDDEN,
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=10,),
     )
 
 
 def escrituras_content(page):
     escrituras_products = [
-    {"slug": "copia-autenticada-escritura", "image": "Escritura/1.jpeg", "name": "Copia autenticada de escritura", "price": "1000"},
-    {"slug": "copia-simple-escritura", "image": "Escritura/2.jpeg", "name": "Copia simple de escritura", "price": "1000"},
-    {"slug": "copia-electronica-escritura", "image": "Escritura/3.jpeg", "name": "Copia electrónica de escritura", "price": "1000"},
-    {"slug": "copia-testimonial-escritura", "image": "Escritura/4.jpeg", "name": "Copia testimonial notarial de escritura", "price": "1000"},
-    {"slug": "copia-extracto-escritura", "image": "Escritura/5.jpeg", "name": "Copia de extracto de escritura", "price": "1000"},
-    {"slug": "minuta-escritura-ia", "image": "Escritura/6.jpeg", "name": "Haz tu minuta de escritura con IA", "price": "1000"},
-    {"slug": "poder-ia", "image": "Escritura/7.jpeg", "name": "Haz tu poder en minutos con IA", "price": "1000"},
-    {"slug": "cambio-nombre", "image": "Escritura/8.jpeg", "name": "Cambio de Nombre", "price": "1000"},
-    {"slug": "testamento-ia", "image": "Escritura/9.jpeg", "name": "Haz tu testamento con IA", "price": "1000"},
-    {"slug": "afectacion-vivienda-familiar", "image": "Escritura/10.jpeg", "name": "Afectación a Vivienda familiar", "price": "1000"},
-    {"slug": "patrimonio-familia-inembargable", "image": "Escritura/11.jpeg", "name": "Patrimonio de familia inembargable", "price": "1000"},
-    {"slug": "compraventa-inmuebles", "image": "Escritura/12.jpeg", "name": "Compraventa de inmuebles", "price": "1000"},
-    {"slug": "cancelacion-hipoteca", "image": "Escritura/13.jpeg", "name": "Cancelación de Hipoteca", "price": "1000"},
-    {"slug": "permuta-inmuebles", "image": "Escritura/14.jpeg", "name": "Permuta de Inmuebles", "price": "1000"},
-    {"slug": "donacion", "image": "Escritura/15.jpeg", "name": "Donación", "price": "1000"},
-    {"slug": "constitucion-hipoteca", "image": "Escritura/16.jpeg", "name": "Constitución de hipoteca", "price": "1000"},
-    {"slug": "sucesion-bienes", "image": "Escritura/17.jpeg", "name": "Sucesión de bienes por causa de muerte", "price": "1000"},
-    {"slug": "correccion-identidad-sexual", "image": "Escritura/18.jpeg", "name": "Corrección Componente de Identidad Sexual", "price": "1000"},
-]
+        {"slug": "copia-autenticada-escritura", "image": "Escritura/1.jpeg",
+            "name": "Copia autenticada de escritura", "price": "1000"},
+        {"slug": "copia-simple-escritura", "image": "Escritura/2.jpeg",
+            "name": "Copia simple de escritura", "price": "1000"},
+        {"slug": "copia-electronica-escritura", "image": "Escritura/3.jpeg",
+            "name": "Copia electrónica de escritura", "price": "1000"},
+        {"slug": "copia-testimonial-escritura", "image": "Escritura/4.jpeg",
+            "name": "Copia testimonial notarial de escritura", "price": "1000"},
+        {"slug": "copia-extracto-escritura", "image": "Escritura/5.jpeg",
+            "name": "Copia de extracto de escritura", "price": "1000"},
+        {"slug": "minuta-escritura-ia", "image": "Escritura/6.jpeg",
+            "name": "Haz tu minuta de escritura con IA", "price": "1000"},
+        {"slug": "poder-ia", "image": "Escritura/7.jpeg",
+            "name": "Haz tu poder en minutos con IA", "price": "1000"},
+        {"slug": "cambio-nombre", "image": "Escritura/8.jpeg",
+            "name": "Cambio de Nombre", "price": "1000"},
+        {"slug": "testamento-ia", "image": "Escritura/9.jpeg",
+            "name": "Haz tu testamento con IA", "price": "1000"},
+        {"slug": "afectacion-vivienda-familiar", "image": "Escritura/10.jpeg",
+            "name": "Afectación a Vivienda familiar", "price": "1000"},
+        {"slug": "patrimonio-familia-inembargable", "image": "Escritura/11.jpeg",
+            "name": "Patrimonio de familia inembargable", "price": "1000"},
+        {"slug": "compraventa-inmuebles", "image": "Escritura/12.jpeg",
+            "name": "Compraventa de inmuebles", "price": "1000"},
+        {"slug": "cancelacion-hipoteca", "image": "Escritura/13.jpeg",
+            "name": "Cancelación de Hipoteca", "price": "1000"},
+        {"slug": "permuta-inmuebles", "image": "Escritura/14.jpeg",
+            "name": "Permuta de Inmuebles", "price": "1000"},
+        {"slug": "donacion", "image": "Escritura/15.jpeg",
+            "name": "Donación", "price": "1000"},
+        {"slug": "constitucion-hipoteca", "image": "Escritura/16.jpeg",
+            "name": "Constitución de hipoteca", "price": "1000"},
+        {"slug": "sucesion-bienes", "image": "Escritura/17.jpeg",
+            "name": "Sucesión de bienes por causa de muerte", "price": "1000"},
+        {"slug": "correccion-identidad-sexual", "image": "Escritura/18.jpeg",
+            "name": "Corrección Componente de Identidad Sexual", "price": "1000"},
+    ]
 
     rows = []
     for i in range(0, len(escrituras_products), 2):
@@ -436,7 +524,7 @@ def escrituras_content(page):
                 controls=row_controls,
             )
         )
-    
+
     # Agregar el botón "Ver Más" al final
     rows.append(
         ft.Container(
@@ -447,24 +535,36 @@ def escrituras_content(page):
             ),
         )
     )
-    
+
     # Crear el contenedor principal
     return ft.Container(
         padding=ft.padding.all(5),
-        content=ft.Column(controls=rows),
+        alignment=ft.alignment.center,
+        content=ft.Column(controls=rows,expand=True,
+            scroll=ft.ScrollMode.HIDDEN,
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=10,),
     )
 
 
 def matrimonio_divorcio_content(page):
     matrimonio_divorcio_products = [
-    {"slug": "matrimonio-domicilio", "image": "matrimonio_divorcio_y_Liquidacion_de_Sociedad_Conyugal/1.jpeg", "name": "Matrimonio a Domicilio", "price": "1000"},
-    {"slug": "fecha-matrimonio-notaria", "image": "matrimonio_divorcio_y_Liquidacion_de_Sociedad_Conyugal/2.jpeg", "name": "Escoje tu fecha de matrimonio en notaria", "price": "1000"},
-    {"slug": "divorcio", "image": "matrimonio_divorcio_y_Liquidacion_de_Sociedad_Conyugal/3.jpeg", "name": "Divorcio", "price": "1000"},
-    {"slug": "liquidacion-sociedad-conyugal", "image": "matrimonio_divorcio_y_Liquidacion_de_Sociedad_Conyugal/4.jpeg", "name": "Liquidación de Sociedad Conyugal", "price": "1000"},
-    {"slug": "union-marital-hecho", "image": "matrimonio_divorcio_y_Liquidacion_de_Sociedad_Conyugal/5.jpeg", "name": "Declaración de Unión Marital de Hecho", "price": "1000"},
-    {"slug": "capitulaciones-matrimoniales", "image": "matrimonio_divorcio_y_Liquidacion_de_Sociedad_Conyugal/6.jpeg", "name": "Capitulaciones Matrimoniales", "price": "1000"},
-    {"slug": "separacion-bienes", "image": "matrimonio_divorcio_y_Liquidacion_de_Sociedad_Conyugal/7.jpeg", "name": "Separación de Bienes", "price": "1000"},
-]
+        {"slug": "matrimonio-domicilio", "image": "matrimonio_divorcio/1.jpeg",
+            "name": "Matrimonio a Domicilio", "price": "1000"},
+        {"slug": "fecha-matrimonio-notaria", "image": "matrimonio_divorcio/2.jpeg",
+            "name": "Escoje tu fecha de matrimonio en notaria", "price": "1000"},
+        {"slug": "divorcio", "image": "matrimonio_divorcio/3.jpeg",
+            "name": "Divorcio", "price": "1000"},
+        {"slug": "liquidacion-sociedad-conyugal", "image": "matrimonio_divorcio/4.jpeg",
+            "name": "Liquidación de Sociedad Conyugal", "price": "1000"},
+        {"slug": "union-marital-hecho", "image": "matrimonio_divorcio/5.jpeg",
+            "name": "Declaración de Unión Marital de Hecho", "price": "1000"},
+        {"slug": "capitulaciones-matrimoniales", "image": "matrimonio_divorcio/6.jpeg",
+            "name": "Capitulaciones Matrimoniales", "price": "1000"},
+        {"slug": "separacion-bienes", "image": "matrimonio_divorcio/7.jpeg",
+            "name": "Separación de Bienes", "price": "1000"},
+    ]
 
     rows = []
     for i in range(0, len(matrimonio_divorcio_products), 2):
@@ -489,7 +589,7 @@ def matrimonio_divorcio_content(page):
                 controls=row_controls,
             )
         )
-    
+
     # Agregar el botón "Ver Más" al final
     rows.append(
         ft.Container(
@@ -500,25 +600,27 @@ def matrimonio_divorcio_content(page):
             ),
         )
     )
-    
+
     # Crear el contenedor principal
     return ft.Container(
         padding=ft.padding.all(5),
-        content=ft.Column(controls=rows),
+        alignment=ft.alignment.center,
+        content=ft.Column(controls=rows,expand=True,
+            scroll=ft.ScrollMode.HIDDEN,
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=10,),
     )
-
 
 
 def declaraciones_juramentadas_content(page):
     declaraciones_juramentadas_products = [
-    {"slug": "declaracion-ingresos", "image": "Declaraciones_Juramentadas/1.jpeg", "name": "Declaración Juramentada de Ingresos", "price": "1000"},
-    {"slug": "declaracion-bienes", "image": "Declaraciones_Juramentadas/2.jpeg", "name": "Declaración Juramentada de Bienes", "price": "1000"},
-    {"slug": "declaracion-no-poseer-vivienda", "image": "Declaraciones_Juramentadas/3.jpeg", "name": "Declaración Juramentada de No Poseer Vivienda", "price": "1000"},
-    {"slug": "declaracion-no-tener-vivienda-propia", "image": "Declaraciones_Juramentadas/4.jpeg", "name": "Declaración Juramentada de No Tener Vivienda Propia", "price": "1000"},
-    {"slug": "declaracion-no-tener-vivienda-familiar", "image": "Declaraciones_Juramentadas/5.jpeg", "name": "Declaración Juramentada de No Tener Vivienda Familiar", "price": "1000"},
-    {"slug": "declaracion-no-tener-vivienda-familiar-2", "image": "Declaraciones_Juramentadas/6.jpeg", "name": "Declaración Juramentada de No Tener Vivienda Familiar", "price": "1000"},
-    {"slug": "declaracion-no-tener-vivienda-familiar-3", "image": "Declaraciones_Juramentadas/7.jpeg", "name": "Declaración Juramentada de No Tener Vivienda Familiar", "price": "1000"},
-]
+        {"slug": "declaracion-juramentada", "image": "declaraciones_juramentadas/1.jpeg",
+            "name": "Declaraciones Juramentadas", "price": "1000"},
+        {"slug": "declaracion-ia", "image": "declaraciones_juramentadas/2.jpeg",
+            "name": "Declaraciones Juramentadas con IA", "price": "1000"},
+
+    ]
 
     rows = []
     for i in range(0, len(declaraciones_juramentadas_products), 2):
@@ -543,7 +645,7 @@ def declaraciones_juramentadas_content(page):
                 controls=row_controls,
             )
         )
-    
+
     # Agregar el botón "Ver Más" al final
     rows.append(
         ft.Container(
@@ -554,10 +656,14 @@ def declaraciones_juramentadas_content(page):
             ),
         )
     )
-    
+
     # Crear el contenedor principal
     return ft.Container(
         padding=ft.padding.all(5),
-        content=ft.Column(controls=rows),
+        alignment=ft.alignment.center,
+        content=ft.Column(controls=rows,expand=True,
+            scroll=ft.ScrollMode.HIDDEN,
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=10,),
     )
-

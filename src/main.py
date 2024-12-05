@@ -5,12 +5,14 @@ import os
 from functools import lru_cache
 import threading
 from pages.home import ViewHome
-from pages.utils.json import json_base64
-from pages.utils.navigation import create_footer
 from pages.auth.Profile import ViewProfile
 from pages.ProductDetail import ViewProductDetail
 from pages.Cart import ViewCart
-
+from pages.auth.PageNotFound import PageNotFound
+from pages.PaymentSuccess import ViewPaymentSuccess
+from pages.Checkout import ViewCheckout
+from pages.auth.Login import ViewLogin
+from pages.auth.Token import ViewToken
 def main(page: ft.Page):
     page.adaptive = False
     page.theme_mode = ft.ThemeMode.LIGHT
@@ -64,25 +66,37 @@ def main(page: ft.Page):
         threading.Thread(target=wrapper).start()
 
     def handle_navigation(route):
-      page.controls.clear()
-      if route == "/":
-          load_view(lambda: page.add(ft.SafeArea(
-              content=ViewHome(page), expand=True)))
-      elif route == "/profile":
-          load_view(lambda: page.add(ft.SafeArea(
-              content=ViewProfile(page), expand=True)))
-      elif re.match(r"^/product-detail/.+", route):
-          # Extraer el parámetro 'url' de la ruta
-          product_url = route[len("/product-detail/"):]
-          load_view(lambda: page.add(ft.SafeArea(
-              content=ViewProductDetail(page, product_url), expand=True)))
-      elif route == "/cart":
-          load_view(lambda: page.add(ft.SafeArea(
-              content=ViewCart(page), expand=True)))
-      else:
-          # Ruta no encontrada, puedes agregar una vista de 404 o redirigir a inicio
-          page.add(ft.Text("Página no encontrada"))
-      page.update()
+        page.controls.clear()
+        if route == "/":
+            load_view(lambda: page.add(ft.SafeArea(
+                content=ViewLogin(page), expand=True)))
+        elif route == "/token":
+            load_view(lambda: page.add(ft.SafeArea(
+                content=ViewToken(page), expand=True)))
+        elif route == "/home":
+            load_view(lambda: page.add(ft.SafeArea(
+                content=ViewHome(page), expand=True)))
+        elif route == "/profile":
+            load_view(lambda: page.add(ft.SafeArea(
+                content=ViewProfile(page), expand=True)))
+        elif re.match(r"^/product-detail/.+", route):
+            # Extraer el parámetro 'url' de la ruta
+            product_url = route[len("/product-detail/"):]
+            load_view(lambda: page.add(ft.SafeArea(
+                content=ViewProductDetail(page, product_url), expand=True)))
+        elif route == "/cart":
+            load_view(lambda: page.add(ft.SafeArea(
+                content=ViewCart(page), expand=True)))
+        elif route == "/checkout":
+            load_view(lambda: page.add(ft.SafeArea(
+                content=ViewCheckout(page), expand=True)))
+        elif page.route == "/payment-success":
+            load_view(lambda: page.add(ft.SafeArea(
+                content=ViewPaymentSuccess(page), expand=True)))
+        else:
+            load_view(lambda: page.add(ft.SafeArea(
+                content=PageNotFound(page), expand=True)))
+        page.update()
 
     def route_change(e):
         handle_navigation(e.route)
@@ -94,6 +108,7 @@ def main(page: ft.Page):
     page.on_route_change = route_change
     page.on_view_pop = view_pop
     page.go(page.route)
+
 
 
 

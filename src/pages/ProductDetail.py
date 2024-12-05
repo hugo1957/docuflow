@@ -67,48 +67,41 @@ def get_product_by_slug(slug):
         ]
         # Matrimonio y Divorcio
         + [
-            {"slug": "matrimonio-domicilio", "image": "matrimonio_divorcio_y_Liquidacion_de_Sociedad_Conyugal/1.jpeg",
-                "name": "Matrimonio a Domicilio", "price": "1000"},
-            {"slug": "fecha-matrimonio-notaria", "image": "matrimonio_divorcio_y_Liquidacion_de_Sociedad_Conyugal/2.jpeg",
-                "name": "Escoje tu fecha de matrimonio en notaria", "price": "1000"},
-            {"slug": "divorcio", "image": "matrimonio_divorcio_y_Liquidacion_de_Sociedad_Conyugal/3.jpeg",
-                "name": "Divorcio", "price": "1000"},
-            {"slug": "liquidacion-sociedad-conyugal", "image": "matrimonio_divorcio_y_Liquidacion_de_Sociedad_Conyugal/4.jpeg",
-                "name": "Liquidación de Sociedad Conyugal", "price": "1000"},
-            {"slug": "union-marital-hecho", "image": "matrimonio_divorcio_y_Liquidacion_de_Sociedad_Conyugal/5.jpeg",
-                "name": "Declaración de Unión Marital de Hecho", "price": "1000"},
-            {"slug": "capitulaciones-matrimoniales", "image": "matrimonio_divorcio_y_Liquidacion_de_Sociedad_Conyugal/6.jpeg",
-                "name": "Capitulaciones Matrimoniales", "price": "1000"},
-            {"slug": "separacion-bienes", "image": "matrimonio_divorcio_y_Liquidacion_de_Sociedad_Conyugal/7.jpeg",
-                "name": "Separación de Bienes", "price": "1000"},
+            {"slug": "matrimonio-domicilio", "image": "matrimonio_divorcio/1.jpeg",
+             "name": "Matrimonio a Domicilio", "price": "1000"},
+            {"slug": "fecha-matrimonio-notaria", "image": "matrimonio_divorcio/2.jpeg",
+             "name": "Escoje tu fecha de matrimonio en notaria", "price": "1000"},
+            {"slug": "divorcio", "image": "matrimonio_divorcio/3.jpeg",
+             "name": "Divorcio", "price": "1000"},
+            {"slug": "liquidacion-sociedad-conyugal", "image": "matrimonio_divorcio/4.jpeg",
+             "name": "Liquidación de Sociedad Conyugal", "price": "1000"},
+            {"slug": "union-marital-hecho", "image": "matrimonio_divorcio/5.jpeg",
+             "name": "Declaración de Unión Marital de Hecho", "price": "1000"},
+            {"slug": "capitulaciones-matrimoniales", "image": "matrimonio_divorcio/6.jpeg",
+             "name": "Capitulaciones Matrimoniales", "price": "1000"},
+            {"slug": "separacion-bienes", "image": "matrimonio_divorcio/7.jpeg",
+             "name": "Separación de Bienes", "price": "1000"},
         ]
-        # Declaraciones Juramentadas
+
         + [
-            {"slug": "declaracion-ingresos", "image": "Declaraciones_Juramentadas/1.jpeg",
-                "name": "Declaración Juramentada de Ingresos", "price": "1000"},
-            {"slug": "declaracion-bienes", "image": "Declaraciones_Juramentadas/2.jpeg",
-                "name": "Declaración Juramentada de Bienes", "price": "1000"},
-            {"slug": "declaracion-no-poseer-vivienda", "image": "Declaraciones_Juramentadas/3.jpeg",
-                "name": "Declaración Juramentada de No Poseer Vivienda", "price": "1000"},
-            {"slug": "declaracion-no-tener-vivienda-propia", "image": "Declaraciones_Juramentadas/4.jpeg",
-                "name": "Declaración Juramentada de No Tener Vivienda Propia", "price": "1000"},
-            {"slug": "declaracion-no-tener-vivienda-familiar", "image": "Declaraciones_Juramentadas/5.jpeg",
-                "name": "Declaración Juramentada de No Tener Vivienda Familiar", "price": "1000"},
-            {"slug": "declaracion-no-tener-vivienda-familiar-2", "image": "Declaraciones_Juramentadas/6.jpeg",
-                "name": "Declaración Juramentada de No Tener Vivienda Familiar", "price": "1000"},
-            {"slug": "declaracion-no-tener-vivienda-familiar-3", "image": "Declaraciones_Juramentadas/7.jpeg",
-                "name": "Declaración Juramentada de No Tener Vivienda Familiar", "price": "1000"},
+            {"slug": "declaracion-juramentada", "image": "declaraciones_juramentadas/1.jpeg",
+             "name": "Declaraciones Juramentadas", "price": "1000"},
+            {"slug": "declaracion-ia", "image": "declaraciones_juramentadas/2.jpeg",
+             "name": "Declaraciones Juramentadas con IA", "price": "1000"},
+
         ]
     )
 
     for product in all_products:
         if product["slug"] == slug:
             return product
-    return None 
+    return None
+
 
 def extract_slug_from_url(url):
 
     return url.replace("/product-detail/", "")
+
 
 def ViewProductDetail(page, url):
 
@@ -121,8 +114,24 @@ def ViewProductDetail(page, url):
     product_description = "Descripción no disponible." if not product else "Este es un producto detallado."
 
     page.controls.clear()
-    page.appbar = create_navbar_product(page)
-    page.navigation_bar = create_footer(page)
+    navbar, update_cart_count = create_navbar_product(page)
+    page.appbar = navbar
+
+    def add_to_cart(e):
+        cart = page.session.get("cart")
+        if cart is None:
+            cart = []
+        cart.append(product)
+        page.session.set("cart", cart)
+        snackbar = ft.SnackBar(
+            content=ft.Text(
+                f"Agregaste {product_name} al carrito.", color="white"),
+            bgcolor="green",
+        )
+        page.overlay.append(snackbar)
+        snackbar.open = True
+        update_cart_count()
+        page.update()
 
     is_favorite = [False]
 
@@ -132,18 +141,6 @@ def ViewProductDetail(page, url):
         heart_icon.style = ft.ButtonStyle(
             icon_color="red" if is_favorite[0] else "black"
         )
-        page.update()
-
-    def add_to_cart(e):
-        cart = page.session.get("cart")
-        if cart is None:
-            cart = []
-        cart.append(product)
-        page.session.set("cart", cart)
-        page.snack_bar = ft.SnackBar(ft.Text(f"Agregaste {product_name} al carrito."))
-        page.snack_bar.open = True
-        # Actualizar la barra de navegación
-        page.appbar = create_navbar_product(page)
         page.update()
 
     heart_icon = ft.IconButton(
@@ -179,8 +176,7 @@ def ViewProductDetail(page, url):
                 spacing=10,
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 controls=[
-                    ft.Text(f"Precio: ${product_price}",
-                            size=18, color="green"),
+                    ft.Container(),
                     ft.Text("Disponible", size=14, color="green"),
                 ],
             ),
