@@ -17,28 +17,27 @@ def ViewToken(page):
                 border_width=2,
                 expand=True,
                 max_length=1,
-                keyboard_type=ft.KeyboardType.NUMBER,
+                # keyboard_type=ft.KeyboardType.NUMBER,
                 on_change=lambda e, i=i: handle_text_change(e, i)
             )
         )
 
     def handle_text_change(e, index):
-        # Validar que solo se ingresen números
+    
         if not e.control.value.isdigit():
             e.control.value = ""
             page.update()
             return
 
-        # Mover el foco al siguiente campo si hay un valor
         if e.control.value and index < len(token_fields) - 1:
             token_fields[index + 1].focus()
         page.update()
 
     def handle_verify_click(e):
-        # Obtenemos el código ingresado uniendo el valor de cada TextField
+
         code = "".join(field.value.strip() for field in token_fields)
         if len(code) < 6:
-            # Muestra un SnackBar si no se han ingresado los 6 dígitos
+
             snack_bar = ft.SnackBar(
                 ft.Text("Debes ingresar los 6 dígitos del código!"), bgcolor=ft.Colors.RED_500
             )
@@ -46,13 +45,9 @@ def ViewToken(page):
             snack_bar.open = True
             page.update()
             return
-
-        # Aquí puedes agregar la lógica para verificar el token
-        # Por ejemplo: verify_token(page, code)
         print(f"Código ingresado: {code}")
         page.go("/home")
-        # Si el token es válido:
-        # page.go("/alguna-ruta-de-exito")
+
 
     container = ft.Column(
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,

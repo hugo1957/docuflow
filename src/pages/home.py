@@ -1,7 +1,6 @@
 import flet as ft
 from pages.utils.navigation import create_footer
 from threading import Timer
-from fletcarousel import BasicAnimatedHorizontalCarousel, HintLine, AutoCycle
 from pages.utils.navigation import create_navbar_home
 
 

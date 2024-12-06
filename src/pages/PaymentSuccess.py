@@ -27,13 +27,23 @@ def ViewPaymentSuccess(page):
                     size=16,
                     text_align=ft.TextAlign.CENTER,
                 ),
-                ft.ElevatedButton(
+                ft.ResponsiveRow(
+                    controls=[
+                        ft.ElevatedButton(
                     text="Volver al inicio",
                     on_click=lambda e: page.go("/"),
                     bgcolor="#e5bc16",
                     color="white",
                     width=150,
                 ),
+                        ft.ElevatedButton(
+                    text="Ver Orden de Compra",
+                    on_click=lambda e: page.go("/orden-de-compra"),
+                    bgcolor="#e5bc16",
+                    color="white",
+                    width=150,
+                )
+                    ])
             ],
             expand=True,
             scroll=ft.ScrollMode.HIDDEN,
@@ -43,4 +53,3 @@ def ViewPaymentSuccess(page):
         )
     )
     return success_view 
-

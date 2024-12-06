@@ -1,9 +1,25 @@
 import flet as ft
 import re 
 from pages.utils.alert import show_construction_dialog
-
+import requests
+from flet.auth.providers import GoogleOAuthProvider
 def ViewLogin(page):
     page.controls.clear()
+    
+    provider = GoogleOAuthProvider(
+        client_id="684509096725-pm1gdgb80i3fck9k5gd1kq7l7daf47a7.apps.googleusercontent.com",
+        client_secret="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",
+        redirect_url="http://localhost:8550/oauth_callback",
+    )
+    
+    def google_login(e):
+        page.login(provider)
+        
+    def on_login(e):
+        page.go("/home")
+        
+    page.on_login = on_login
+    
     phone_field = ft.TextField(
         label="Número de Teléfono",
         width=350,
@@ -112,8 +128,7 @@ def ViewLogin(page):
                                         ink=True,
                                         col={"sm": 12, "md": 6,
                                              "lg": 5, "xl": 4},
-                                        on_click=lambda _: show_construction_dialog(
-                                            page, "Google", "La autenticacion")
+                                        on_click=google_login
                                     ),
                                     ft.Container(
                                         content=ft.Row(
