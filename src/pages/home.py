@@ -2,101 +2,13 @@ import flet as ft
 from pages.utils.navigation import create_footer
 from threading import Timer
 from pages.utils.navigation import create_navbar_home
-
-
+from pages.utils.image import create_image_with_loader
+from pages.utils.carusel import create_carousel
 def ViewHome(page):
-    page.controls.clear()
-    navbar, update_cart_count = create_navbar_home(page)
+    navbar = create_navbar_home(page)[0]
     page.appbar = navbar
     page.navigation_bar = create_footer(page)
-
-    def create_carousel(page):
-        # Lista de imágenes
-        images = [
-            {"src": "banner/1.png", "alt": "Banner 1"},
-            {"src": "Autenticacion/1.jpeg", "alt": "Banner 2"},
-            {"src": "banner/2.png", "alt": "Banner 3"},
-        ]
-        active_index = 0
-
-        animated_image = ft.AnimatedSwitcher(
-            ft.Container(
-                content=ft.Image(
-                    src=images[0]["src"],
-                    width="100%",
-                    height="100%",
-                    fit=ft.ImageFit.CONTAIN,  # Ocupa todo el contenedor
-                ),
-                width="100%",
-                height=200,
-                border_radius=ft.border_radius.all(15),  
-                clip_behavior=ft.ClipBehavior.HARD_EDGE,
-            ),
-            duration=500, 
-            transition=ft.AnimatedSwitcherTransition.FADE,
-        )
-        def update_carousel(index=None):
-            nonlocal active_index
-            if index is None:
-                active_index = (active_index + 1) % len(images)
-            else:  
-                active_index = index
-            animated_image.content = ft.Container(
-                content=ft.Image(
-                    src=images[active_index]["src"],
-                    fit=ft.ImageFit.COVER,
-                ),
-                width=page.window.width,
-                height=200,
-                border_radius=ft.border_radius.all(15),
-                clip_behavior=ft.ClipBehavior.HARD_EDGE,
-            )
-            update_dots()
-            page.update()
-        def update_dots():
-            for i, dot in enumerate(dots.controls):
-                dot.bgcolor = "#007BFF" if i == active_index else "#CCCCCC"
-        def start_timer():
-            def auto_update():
-                update_carousel()
-                start_timer() 
-            Timer(4.0, auto_update).start() 
-        dots = ft.Row(
-            alignment=ft.MainAxisAlignment.CENTER,
-            controls=[
-                ft.Container(
-                    width=10,
-                    height=10,
-                    border_radius=50,
-                    bgcolor="#007BFF" if i == active_index else "#CCCCCC",
-                    on_click=lambda e, i=i: update_carousel(i),
-                )
-                for i in range(len(images))
-            ],
-        )
-
-        carousel = ft.Container(
-            width=page.window.width,
-            content=ft.Column(
-                expand=True,
-                alignment=ft.MainAxisAlignment.CENTER,
-                controls=[
-                    ft.Container(
-                        width=page.window.width,
-                        height=200,
-                        content=animated_image, 
-                    ),
-                    ft.Container(
-                        alignment=ft.alignment.center,
-                        padding=ft.padding.symmetric(vertical=10),
-                        content=dots, 
-                    ),
-                ],
-            ),
-        )
-        start_timer()
-        return carousel
-
+    page.update()
     def create_tab_content(index):
         categories = [
             "Registro Civil",
@@ -287,25 +199,19 @@ def create_content(page, image, name, valor, url):
         bgcolor=ft.Colors.GREY_100,
         content=ft.Column(
             controls=[
-
-                ft.Stack(
-                    [
-                        ft.Image(
-                            src=image,
-                            width=200,
-                            height=140,
-                            fit=ft.ImageFit.COVER,
-                            border_radius=ft.border_radius.all(15),
-                        ),
-
-                    ]
+                create_image_with_loader(
+                    src=image,
+                    width=200,
+                    height=140,
+                    fit=ft.ImageFit.COVER,
+                    border_radius=ft.border_radius.all(15),
                 ),
                 ft.Text(
                     name,
                     weight=ft.FontWeight.BOLD,
                     size=18,
                     max_lines=2,
-                    overflow=ft.TextOverflow.ELLIPSIS,  
+                    overflow=ft.TextOverflow.ELLIPSIS,
                 ),
                 ft.Text("Deep Foam", size=14, color="#717171"),
                 ft.Row(
@@ -326,7 +232,6 @@ def create_content(page, image, name, valor, url):
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 ),
-
             ],
             spacing=10,
         ),
@@ -373,7 +278,7 @@ def registro_civil_content(page):
                         product["image"],
                         product["name"],
                         product["price"],
-                        f"/product-detail/{product['slug']}"
+                        product["slug"],
                     ),
                 )
             )
@@ -388,11 +293,14 @@ def registro_civil_content(page):
     return ft.Container(
         padding=ft.padding.all(5),
         alignment=ft.alignment.center,
-        content=ft.Column(controls=rows, expand=True,
-                          scroll=ft.ScrollMode.HIDDEN,
-                          alignment=ft.MainAxisAlignment.CENTER,
-                          horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                          spacing=10,),
+        content=ft.Column(
+            controls=rows,
+            expand=True,
+            scroll=ft.ScrollMode.HIDDEN,
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=10,
+        ),
     )
 
 
@@ -436,7 +344,7 @@ def autenticacion_content(page):
                         product["image"],
                         product["name"],
                         product["price"],
-                        f"/product-detail/{product['slug']}"
+                        product["slug"],
                     ),
                 )
             )
@@ -448,15 +356,17 @@ def autenticacion_content(page):
             )
         )
 
-    # Crear el contenedor principal con las filas generadas
     return ft.Container(
         padding=ft.padding.all(5),
         alignment=ft.alignment.center,
-        content=ft.Column(controls=rows,expand=True,
+        content=ft.Column(
+            controls=rows,
+            expand=True,
             scroll=ft.ScrollMode.HIDDEN,
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=10,),
+            spacing=10,
+        ),
     )
 
 
@@ -512,7 +422,7 @@ def escrituras_content(page):
                         product["image"],
                         product["name"],
                         product["price"],
-                        f"/product-detail/{product['slug']}"
+                        product["slug"],
                     ),
                 )
             )
@@ -524,26 +434,17 @@ def escrituras_content(page):
             )
         )
 
-    # Agregar el botón "Ver Más" al final
-    rows.append(
-        ft.Container(
-            alignment=ft.alignment.top_right,
-            content=ft.TextButton(
-                text="Ver Más",
-                on_click=lambda e: print("Ver Más"),
-            ),
-        )
-    )
-
-    # Crear el contenedor principal
     return ft.Container(
         padding=ft.padding.all(5),
         alignment=ft.alignment.center,
-        content=ft.Column(controls=rows,expand=True,
+        content=ft.Column(
+            controls=rows,
+            expand=True,
             scroll=ft.ScrollMode.HIDDEN,
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=10,),
+            spacing=10,
+        ),
     )
 
 
@@ -577,7 +478,7 @@ def matrimonio_divorcio_content(page):
                         product["image"],
                         product["name"],
                         product["price"],
-                        f"/product-detail/{product['slug']}"
+                        product["slug"],
                     ),
                 )
             )
@@ -589,26 +490,17 @@ def matrimonio_divorcio_content(page):
             )
         )
 
-    # Agregar el botón "Ver Más" al final
-    rows.append(
-        ft.Container(
-            alignment=ft.alignment.top_right,
-            content=ft.TextButton(
-                text="Ver Más",
-                on_click=lambda e: print("Ver Más"),
-            ),
-        )
-    )
-
-    # Crear el contenedor principal
     return ft.Container(
         padding=ft.padding.all(5),
         alignment=ft.alignment.center,
-        content=ft.Column(controls=rows,expand=True,
+        content=ft.Column(
+            controls=rows,
+            expand=True,
             scroll=ft.ScrollMode.HIDDEN,
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=10,),
+            spacing=10,
+        ),
     )
 
 
@@ -633,7 +525,7 @@ def declaraciones_juramentadas_content(page):
                         product["image"],
                         product["name"],
                         product["price"],
-                        f"/product-detail/{product['slug']}"
+                        product["slug"],
                     ),
                 )
             )
@@ -645,24 +537,15 @@ def declaraciones_juramentadas_content(page):
             )
         )
 
-    # Agregar el botón "Ver Más" al final
-    rows.append(
-        ft.Container(
-            alignment=ft.alignment.top_right,
-            content=ft.TextButton(
-                text="Ver Más",
-                on_click=lambda e: print("Ver Más"),
-            ),
-        )
-    )
-
-    # Crear el contenedor principal
     return ft.Container(
         padding=ft.padding.all(5),
         alignment=ft.alignment.center,
-        content=ft.Column(controls=rows,expand=True,
+        content=ft.Column(
+            controls=rows,
+            expand=True,
             scroll=ft.ScrollMode.HIDDEN,
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=10,),
+            spacing=10,
+        ),
     )

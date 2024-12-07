@@ -18,13 +18,17 @@ from pages.OrderDetail import ViewOrderDetail
 class ViewManager:
     def __init__(self, page):
         self.page = page
-        self.view_cache = {}  # Caché para las vistas ya generadas
+        self.view_cache = {}
+
+    def clear_navigation(self):
+        self.page.appbar = None
+        self.page.navigation_bar = None
+        self.page.controls.clear()
 
     def get_view(self, route, params=None):
         if route in self.view_cache:
             return self.view_cache[route]
-        
-        # Generar la vista según la ruta
+
         if route == "/":
             view = ViewLogin(self.page)
         elif route == "/token":
@@ -52,7 +56,6 @@ class ViewManager:
         else:
             view = PageNotFound(self.page)
 
-        # Almacenar en caché y devolver
         self.view_cache[route] = view
         return view
 
@@ -72,8 +75,7 @@ async def main(page: ft.Page):
     view_manager = ViewManager(page)
 
     def handle_navigation(route):
-        page.controls.clear()
-
+        view_manager.clear_navigation()
         params = {}
         if re.match(r"^/product-detail/.+", route):
             params["product_url"] = route[len("/product-detail/"):]
