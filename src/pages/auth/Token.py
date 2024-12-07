@@ -2,6 +2,10 @@ import flet as ft
 
 def ViewToken(page):
     page.controls.clear()
+    page.appbar = ft.AppBar(
+        bgcolor=ft.Colors.WHITE,
+    )
+    page.navigation_bar = None
     page.update()
     token_fields = [
         ft.TextField(

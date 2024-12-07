@@ -60,7 +60,12 @@ async def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.LIGHT
     page.bgcolor = ft.Colors.WHITE
     page.padding = ft.padding.all(0)
-
+    theme = ft.Theme()
+    theme.page_transitions.windows = ft.PageTransitionTheme.NONE
+    theme.page_transitions.android = ft.PageTransitionTheme.NONE
+    theme.page_transitions.ios = ft.PageTransitionTheme.NONE
+    page.theme = theme
+    page.window.always_on_top = True
     def event(e):
         if e.data == "detach" and page.platform == ft.PagePlatform.ANDROID:
             os._exit(1)

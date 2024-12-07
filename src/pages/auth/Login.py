@@ -6,7 +6,11 @@ from flet.auth.providers import GoogleOAuthProvider
 
 def ViewLogin(page):
     page.controls.clear()
-    
+    page.appbar = ft.AppBar(
+        bgcolor=ft.Colors.WHITE,
+    )
+    page.navigation_bar = None
+    page.update()
     provider = GoogleOAuthProvider(
         client_id="684509096725-pm1gdgb80i3fck9k5gd1kq7l7daf47a7.apps.googleusercontent.com",
         client_secret="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",

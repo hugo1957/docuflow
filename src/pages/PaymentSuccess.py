@@ -2,9 +2,10 @@ import flet as ft
 from pages.utils.navigation import create_footer, create_navbar_product
 
 def ViewPaymentSuccess(page):
+    page.controls.clear()
     page.appbar = create_navbar_product(page)[0]
     page.navigation_bar = create_footer(page)
-
+    page.update()
     success_view = ft.Container(
         padding=ft.padding.all(10),
         alignment=ft.alignment.center,

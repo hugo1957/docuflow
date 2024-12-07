@@ -4,10 +4,12 @@ from pages.utils.navigation import create_navbar_product, create_footer
 def ViewFavorites(page):
     favorites = page.session.get("favorites") or []
     cart = page.session.get("cart") or []
+    page.controls.clear()
     navbar, update_cart_count = create_navbar_product(page)
     page.appbar = navbar
     page.navigation_bar = create_footer(page)
-
+    page.update()
+    
     favorite_items_container = ft.Column(spacing=10)
     no_favorites_message = ft.Container(
         alignment=ft.alignment.center,

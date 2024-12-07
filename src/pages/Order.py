@@ -2,10 +2,11 @@ import flet as ft
 from pages.utils.navigation import create_footer, create_navbar_product
 
 def ViewOrders(page):
+    page.controls.clear()
     navbar = create_navbar_product(page)[0]
     page.appbar = navbar
     page.navigation_bar = create_footer(page)
-
+    page.update()
     orders = page.session.get("orders") or [] 
 
     def go_to_order_detail(order_id):

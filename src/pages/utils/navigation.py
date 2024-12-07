@@ -138,65 +138,9 @@ def create_navbar_product(page):
     return nav_bar, update_cart_count
 
 
-def create_appbar_init(page, request_permission):
-    page.controls.clear()
-    return ft.AppBar(
-        bgcolor=ft.Colors.WHITE,
-        elevation_on_scroll=0,
-        elevation=0,
-        actions=[
-            ft.IconButton(
-                ft.Icons.NOTIFICATIONS,
-                icon_size=30,
-                icon_color="#E62514",
-                on_click=lambda _: request_permission(_)
-            ),
-            ft.Container(width=10),
-        ],
-    )
 
 
-def create_appbar(page):
-    is_login = page.route == "/login"
-    is_forgot_password = page.route == "/forgot-password"
-    button_back = "/login" if is_forgot_password else "/"
 
-    return ft.AppBar(
-        bgcolor=ft.Colors.WHITE,
-        leading=ft.IconButton(
-            icon=ft.Icons.ARROW_BACK_OUTLINED,
-            icon_size=20,
-            on_click=lambda e: page.go(button_back),
-            icon_color="#E62514",
-        ),
-        # title=ft.Text(
-        #     title_text,
-        #     size=15,
-        #     color=ft.Colors.WHITE,
-        #     text_align="center",
-        #     weight=ft.FontWeight.BOLD,
-        #     font_family="Heavitas",
-        # ),
-        # actions=[
-        #     ft.Container(
-        #         content=ft.Text(
-        #             button_text,
-        #             size=13,
-        #             color=ft.Colors.WHITE,
-        #             weight=ft.FontWeight.BOLD
-        #         ),
-        #         padding=ft.padding.symmetric(horizontal=15, vertical=8),
-        #         border_radius=ft.border_radius.all(5),
-        #         bgcolor=ft.Colors.with_opacity(0.2, ft.Colors.WHITE),
-        #         ink=True,
-        #         on_click=lambda _: page.go(button_action),  # Cambia de login, registro o iniciar sesión
-        #     ),
-        #     ft.Container(width=10),  # Espaciador opcional
-        # ],
-        center_title=True,
-        elevation_on_scroll=0,
-        elevation=0,
-    )
 
 
 def create_footer(page):
