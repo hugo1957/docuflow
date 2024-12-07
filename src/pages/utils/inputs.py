@@ -2,13 +2,12 @@
 import flet as ft
 
 
-def create_input_field(label, width=350, height=40):
+def create_input_field(label, type=None):
     return ft.Column(
         spacing=5,
         controls=[
             ft.Text(label, style=ft.TextStyle(color="#717171")),
             ft.TextField(
-
                 border_radius=ft.border_radius.all(15),
                 content_padding=ft.padding.symmetric(horizontal=20, vertical=15),
                 bgcolor=ft.Colors.WHITE,

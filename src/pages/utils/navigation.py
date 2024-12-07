@@ -4,7 +4,7 @@ def get_drawer_selected_index(route):
     route_to_index = {
         "/home": 0,
         "/profile": 1,
-        "/product-detail": 2,
+        "/favorites": 2,
         "/contacto": 3,
     }
     return route_to_index.get(route, 0)
@@ -14,7 +14,7 @@ def get_footer_selected_index(route):
     route_to_index = {
         "/home": 0,
         "/profile": 1,
-        "/product-detail": 2,
+        "/favorites": 2,
         "/contacto": 3,
     }
     return route_to_index.get(route, 0)
@@ -27,14 +27,14 @@ def get_route_from_index(page, index, footer=False):
     drawer_routes = [
         "/home",
         "/profile",
-        "/product-detail",
+        "/favorites",
         "/contacto",
     ]
 
     footer_routes = [
         "/home",
         "/profile",
-        "/product-detail",
+        "/favorites",
         "/contacto",
     ]
     routes = footer_routes if footer else drawer_routes
@@ -215,6 +215,11 @@ def create_footer(page):
             ft.NavigationBarDestination(
                 icon=ft.Icons.BOY,
                 selected_icon=ft.Icons.BOY,
+                bgcolor="#E62514",
+            ),
+            ft.NavigationBarDestination(
+                icon=ft.Icons.FAVORITE,
+                selected_icon=ft.Icons.FAVORITE,
                 bgcolor="#E62514",
             ),
             ft.NavigationBarDestination(

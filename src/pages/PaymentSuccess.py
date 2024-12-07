@@ -37,8 +37,8 @@ def ViewPaymentSuccess(page):
                     width=150,
                 ),
                         ft.ElevatedButton(
-                    text="Ver Orden de Compra",
-                    on_click=lambda e: page.go("/orden-de-compra"),
+                    text="Ver Ordenes de Compra",
+                    on_click=lambda e: page.go("/orders"),
                     bgcolor="#e5bc16",
                     color="white",
                     width=150,

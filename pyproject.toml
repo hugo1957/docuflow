@@ -8,9 +8,7 @@ dependencies = [
   "flet==0.25.1",
   "requests"
 ]
-compile.app = true 
-compile.packages = true 
-compile.cleanup = true 
+
 
 [tool.flet]
 # org name in reverse domain name notation, e.g. "com.mycompany".
@@ -26,6 +24,10 @@ company = "Flet"
 
 # copyright text to display in about app dialogs
 copyright = "Copyright (C) 2024 by Flet"
+
+compile.app = true 
+compile.packages = true 
+compile.cleanup = true 
 
 [tool.flet.app]
 path = "src"

@@ -135,27 +135,21 @@ def ViewProductDetail(page, url):
 
     is_favorite = [False]
 
-    def toggle_favorite(e):
-        is_favorite[0] = not is_favorite[0]
-        heart_icon.icon = ft.Icons.FAVORITE if is_favorite[0] else ft.Icons.FAVORITE_BORDER
-        heart_icon.style = ft.ButtonStyle(
-            icon_color="red" if is_favorite[0] else "black"
-        )
-        page.update()
+
 
     heart_icon = ft.IconButton(
         icon=ft.Icons.FAVORITE_BORDER,
         style=ft.ButtonStyle(icon_color="black"),
         icon_size=24,
-        on_click=toggle_favorite,
+        on_click=lambda e: toggle_favorite(product, page, is_favorite, heart_icon),
     )
 
     add_to_cart_button = ft.ElevatedButton(
-        text="Agregar al carrito",
-        on_click=add_to_cart,
-        bgcolor="#e5bc16",
-        color="white",
-    )
+            text="Agregar al carrito",
+            on_click=add_to_cart,
+            bgcolor="#e5bc16",
+            color="white",
+        )
 
     product_image_container = ft.Container(
         content=ft.Image(
@@ -227,3 +221,39 @@ def ViewProductDetail(page, url):
     )
 
     return product_detail_container
+
+def toggle_favorite(product, page, is_favorite, heart_icon):
+    is_favorite[0] = not is_favorite[0]
+    favorites = page.session.get("favorites")
+    if not favorites:
+        favorites = []
+
+    if is_favorite[0]:
+        if product not in favorites:
+            favorites.append(product)
+            page.session.set("favorites", favorites)
+
+        heart_icon.icon = ft.Icons.FAVORITE
+        heart_icon.style = ft.ButtonStyle(icon_color="red")
+        snackbar = ft.SnackBar(
+            content=ft.Text(
+                f"Agregaste {product['name']} a tus favoritos.", color="white"
+            ),
+            bgcolor="green",
+        )
+    else:
+        favorites = [fav for fav in favorites if fav["slug"] != product["slug"]]
+        page.session.set("favorites", favorites)
+        heart_icon.icon = ft.Icons.FAVORITE_BORDER
+        heart_icon.style = ft.ButtonStyle(icon_color="black")
+        snackbar = ft.SnackBar(
+            content=ft.Text(
+                f"Eliminaste {product['name']} de tus favoritos.", color="white"
+            ),
+            bgcolor="red",
+        )
+
+    page.overlay.append(snackbar)
+    snackbar.open = True
+
+    page.update()
