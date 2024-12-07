@@ -4,7 +4,9 @@ from threading import Timer
 from pages.utils.navigation import create_navbar_home
 from pages.utils.image import create_image_with_loader
 from pages.utils.carusel import create_carousel
+
 def ViewHome(page):
+
     navbar = create_navbar_home(page)[0]
     page.appbar = navbar
     page.navigation_bar = create_footer(page)

@@ -19,12 +19,7 @@ class ViewManager:
     def __init__(self, page):
         self.page = page
         self.view_cache = {}
-
-    def clear_navigation(self):
-        self.page.appbar = None
-        self.page.navigation_bar = None
-        self.page.controls.clear()
-
+        
     def get_view(self, route, params=None):
         if route in self.view_cache:
             return self.view_cache[route]
@@ -75,7 +70,8 @@ async def main(page: ft.Page):
     view_manager = ViewManager(page)
 
     def handle_navigation(route):
-        view_manager.clear_navigation()
+        page.controls.clear()
+        
         params = {}
         if re.match(r"^/product-detail/.+", route):
             params["product_url"] = route[len("/product-detail/"):]
@@ -100,4 +96,4 @@ async def main(page: ft.Page):
 
 
 if __name__ == "__main__":
-    ft.app(target=main, assets_dir="assets", port=8550, view=ft.WEB_BROWSER)
+    ft.app(target=main, assets_dir="assets")

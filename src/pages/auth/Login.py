@@ -3,6 +3,7 @@ import re
 from pages.utils.alert import show_construction_dialog
 import requests
 from flet.auth.providers import GoogleOAuthProvider
+
 def ViewLogin(page):
     page.controls.clear()
     

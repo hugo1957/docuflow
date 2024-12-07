@@ -3,11 +3,9 @@ from pages.utils.navigation import create_footer, create_navbar_product
 
 
 def ViewCart(page):
-    page.controls.clear()
     navbar, update_cart_count = create_navbar_product(page)
     page.appbar = navbar
     page.navigation_bar = create_footer(page)
-    page.update()
 
     cart_items_container = ft.Column(spacing=10)
     total_price_text = ft.Text("", size=20, weight=ft.FontWeight.BOLD)

@@ -1,14 +1,16 @@
 import flet as ft
-from pages.utils.navigation import create_navbar_product
+from pages.utils.navigation import create_navbar_product, create_footer
 
 def ViewFavorites(page):
     favorites = page.session.get("favorites") or []
     cart = page.session.get("cart") or []
     navbar, update_cart_count = create_navbar_product(page)
     page.appbar = navbar
-    
+    page.navigation_bar = create_footer(page)
+
     favorite_items_container = ft.Column(spacing=10)
     no_favorites_message = ft.Container(
+        alignment=ft.alignment.center,
         padding=ft.padding.all(10),
         content=ft.Column(
             controls=[
@@ -43,20 +45,18 @@ def ViewFavorites(page):
     )
 
     def update_favorites_display():
-
         favorite_items_container.controls.clear()
         if not favorites:
             favorite_items_container.controls.append(no_favorites_message)
             page.update()
             return
 
-        for idx, product in enumerate(favorites):
+        for product in favorites:
             favorite_item = ft.Container(
                 padding=ft.padding.all(10),
                 content=ft.Row(
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     controls=[
-
                         ft.Image(
                             src=product["image"],
                             width=80,
@@ -64,7 +64,6 @@ def ViewFavorites(page):
                             fit=ft.ImageFit.COVER,
                             border_radius=ft.border_radius.all(8),
                         ),
-
                         ft.Column(
                             expand=True,
                             spacing=5,
@@ -79,18 +78,17 @@ def ViewFavorites(page):
                                 ft.Text(f"Precio: ${product['price']}", size=14),
                             ],
                         ),
-
                         ft.Row(
                             controls=[
                                 ft.ElevatedButton(
                                     text="Agregar al carrito",
                                     bgcolor="#e5bc16",
                                     color="white",
-                                    on_click=lambda e, idx=idx: add_to_cart_from_favorites(idx),
+                                    on_click=lambda e, product=product: add_to_cart_from_favorites(product),
                                 ),
                                 ft.IconButton(
                                     icon=ft.Icons.DELETE_OUTLINE,
-                                    on_click=lambda e, idx=idx: remove_from_favorites(idx),
+                                    on_click=lambda e, product=product: remove_from_favorites(product),
                                     icon_color=ft.Colors.RED,
                                 ),
                             ],
@@ -101,27 +99,23 @@ def ViewFavorites(page):
             favorite_items_container.controls.append(favorite_item)
         page.update()
 
-    def add_to_cart_from_favorites(idx):
-        product = favorites[idx]
+    def add_to_cart_from_favorites(product):
         if product not in cart:
             cart.append(product)
             page.session.set("cart", cart)
-
-
-        del favorites[idx]
-        page.session.set("favorites", favorites)
-
-
+        if product in favorites:
+            favorites.remove(product)
+            page.session.set("favorites", favorites)
         update_cart_count()
         update_favorites_display()
 
-    def remove_from_favorites(idx):
-        del favorites[idx]
-        page.session.set("favorites", favorites)
+    def remove_from_favorites(product):
+        if product in favorites:
+            favorites.remove(product)
+            page.session.set("favorites", favorites)
         update_favorites_display()
 
     update_favorites_display()
-
 
     main_container = ft.Container(
         padding=ft.padding.all(10),

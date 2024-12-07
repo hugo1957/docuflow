@@ -113,10 +113,10 @@ def ViewProductDetail(page, url):
     product_price = product["price"] if product else "N/A"
     product_description = "Descripción no disponible." if not product else "Este es un producto detallado."
 
-    page.controls.clear()
     navbar, update_cart_count = create_navbar_product(page)
     page.appbar = navbar
-
+    page.navigation_bar = create_footer(page)
+    page.update()
     def add_to_cart(e):
         cart = page.session.get("cart")
         if cart is None:
