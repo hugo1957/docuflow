@@ -43,7 +43,7 @@ def PageNotFound(page):
 
     # Composición de la página
     content = ft.Container(
-        bgcolor="#005B7A",
+        bgcolor="#007354",
         padding=ft.padding.all(10),
         content=ft.Column(
             controls=[

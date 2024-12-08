@@ -15,6 +15,7 @@ def create_input_field(label, type=None):
                 label_style=ft.TextStyle(color="#717171"),
                 border_width=0.5,
                 expand=True,
+                filled=False,
             )
         ]
     )

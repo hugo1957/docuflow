@@ -3,7 +3,7 @@ import flet as ft
 def get_drawer_selected_index(route):
     route_to_index = {
         "/home": 0,
-        "/profile": 1,
+        "/user": 1,
         "/favorites": 2,
         "/contacto": 3,
     }
@@ -13,7 +13,7 @@ def get_drawer_selected_index(route):
 def get_footer_selected_index(route):
     route_to_index = {
         "/home": 0,
-        "/profile": 1,
+        "/user": 1,
         "/favorites": 2,
         "/contacto": 3,
     }
@@ -26,14 +26,14 @@ def get_route_from_index(page, index, footer=False):
 
     drawer_routes = [
         "/home",
-        "/profile",
+        "/user",
         "/favorites",
         "/contacto",
     ]
 
     footer_routes = [
         "/home",
-        "/profile",
+        "/user",
         "/favorites",
         "/contacto",
     ]
@@ -82,7 +82,7 @@ def create_navbar_home(page):
 
     nav_bar = ft.AppBar(
         title=ft.Text("DocuFlow", color="white"),
-        bgcolor="#005B7A",
+        bgcolor="#007354",
         actions=[cart_icon],
     )
     return nav_bar, update_cart_count

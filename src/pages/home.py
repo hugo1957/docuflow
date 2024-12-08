@@ -136,7 +136,7 @@ def ViewHome(page):
             spacing=0,
             controls=[
                 ft.Container(
-                    bgcolor="#005B7A",
+                    bgcolor="#007354",
                     padding=ft.padding.all(10),
                     content=ft.TextField(
                         bgcolor=ft.Colors.WHITE,

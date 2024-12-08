@@ -12,20 +12,10 @@ dependencies = [
 
 
 [tool.flet]
-# org name in reverse domain name notation, e.g. "com.mycompany".
-# Combined with project.name to build bundle ID for iOS and Android apps
 org = "com.mycompany"
-
-# project display name that is used as an app title on Android and iOS home screens,
-# shown in window titles and about app dialogs on desktop.
 product = "DocuFlow"
-
-# company name to display in about app dialogs
 company = "Flet"
-
-# copyright text to display in about app dialogs
 copyright = "Copyright (C) 2024 by Flet"
-
 compile.app = true 
 compile.packages = true 
 compile.cleanup = true 
@@ -34,8 +24,8 @@ compile.cleanup = true
 path = "src"
 
 [tool.flet.splash]
-color = "#005B7A" # --splash-color
-dark_color = "#005B7A" # --splash-dark-color
-web = false # --no-web-splash
-ios = false # --no-ios-splash
-android = false # --no-android-splash
+color = "#007354"
+dark_color = "#007354"
+web = false 
+ios = false  
+android = false 
