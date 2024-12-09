@@ -76,7 +76,7 @@ def ViewCart(page):
                     controls=[
                         ft.Image(
                             src=item["image"],
-                            width=page.window.width,
+                            width=page.width,
                             height=100,
                             border_radius=ft.border_radius.all(10),
                             fit=ft.ImageFit.CONTAIN,

@@ -18,7 +18,7 @@ def create_carousel(page):
                 height="100%",
                 fit=ft.ImageFit.CONTAIN,  # Ocupa todo el contenedor
             ),
-            width="100%",
+            width=page.width,
             height=200,
             border_radius=ft.border_radius.all(15),
             clip_behavior=ft.ClipBehavior.HARD_EDGE,
@@ -38,7 +38,7 @@ def create_carousel(page):
                 src=images[active_index]["src"],
                 fit=ft.ImageFit.COVER,
             ),
-            width=page.window.width,
+            width=page.width,
             height=200,
             border_radius=ft.border_radius.all(15),
             clip_behavior=ft.ClipBehavior.HARD_EDGE,
@@ -71,13 +71,14 @@ def create_carousel(page):
     )
 
     carousel = ft.Container(
-        width=page.window.width,
+        width=page.width,
+        
         content=ft.Column(
             expand=True,
             alignment=ft.MainAxisAlignment.CENTER,
             controls=[
                 ft.Container(
-                    width=page.window.width,
+                    width=page.width,
                     height=200,
                     content=animated_image,
                 ),

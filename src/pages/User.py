@@ -55,7 +55,7 @@ def ViewUser(page):
     quick_actions_controls = [
         ft.Container(
             padding=ft.padding.all(10),
-            bgcolor=ft.colors.SURFACE_VARIANT,
+            bgcolor=ft.Colors.GREY_100,
             border_radius=8,
             width=80,
             height=80,
@@ -77,7 +77,10 @@ def ViewUser(page):
     quick_actions_section = ft.Container(
         content=ft.Row(
             quick_actions_controls,
-            alignment=ft.MainAxisAlignment.SPACE_AROUND,
+            alignment=ft.MainAxisAlignment.CENTER,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            expand=True,
+            scroll=ft.ScrollMode.HIDDEN,
         ),
         padding=ft.padding.all(10),
     )

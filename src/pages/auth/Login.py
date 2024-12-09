@@ -1,3 +1,4 @@
+
 import flet as ft
 from pages.utils.numero_telefono import PhoneInputDropdown
 
@@ -37,6 +38,7 @@ def ViewLogin(page):
             expand=True,
             alignment=ft.MainAxisAlignment.START,
             controls=[
+                ft.Container(height=20),
                 ft.Text("Número de teléfono", style=ft.TextStyle(color="#717171")),
                 phone_input,
                 ft.Container(
@@ -44,7 +46,6 @@ def ViewLogin(page):
                     alignment=ft.alignment.center,
                     on_click=handle_submit,
                     border_radius=ft.border_radius.all(5),
-                    width=page.window.width,
                     height=50,
                     gradient=ft.LinearGradient(
                         begin=ft.alignment.top_left,

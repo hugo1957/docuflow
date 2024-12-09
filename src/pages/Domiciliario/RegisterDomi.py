@@ -103,7 +103,13 @@ def ViewRegisterDomiciliario(page):
                 create_input_field("Nombre"),
                 create_input_field("Apellidos"),
                 create_input_field("Correo electrónico"),
-                phone_input,
+                ft.Column(
+                    spacing=0,
+                    controls=[
+                        ft.Text("Número de teléfono", style=ft.TextStyle(color="#717171")),
+                        phone_input,
+                    ]
+                ),
                 password_field,
                 repeat_password_field,
                 terms_section,

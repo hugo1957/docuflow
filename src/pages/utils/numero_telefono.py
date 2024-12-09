@@ -273,5 +273,7 @@ class PhoneInputDropdown(ft.UserControl):
 
         return ft.Row(
             controls=[self.dropdown, self.phone_field],
-            spacing=10,
+            spacing=5,
+            alignment=ft.MainAxisAlignment.START,
+            vertical_alignment=ft.VerticalAlignment.CENTER,
         )

@@ -156,7 +156,7 @@ def ViewProductDetail(page, url):
             src=product_image,
             fit=ft.ImageFit.COVER,
         ),
-        width=page.window.width,
+        width=page.width,
         height=200,
         border_radius=ft.border_radius.all(15),
         clip_behavior=ft.ClipBehavior.HARD_EDGE,

@@ -127,5 +127,7 @@ async def main(page: ft.Page):
     handle_navigation(page, view_manager, page.route)
 
 
+
+
 if __name__ == "__main__":
     ft.app(target=main, assets_dir="assets")

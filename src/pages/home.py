@@ -177,7 +177,7 @@ def ViewHome(page):
                         ),
                         ft.Container(
                             expand=True,
-                            width=page.window.width,
+                            
                             content=create_carousel(page),
                             padding=ft.padding.all(15),
                         ),
@@ -551,3 +551,4 @@ def declaraciones_juramentadas_content(page):
             spacing=10,
         ),
     )
+
