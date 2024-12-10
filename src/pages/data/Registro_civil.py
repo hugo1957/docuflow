@@ -1,10 +1,10 @@
-from pages.utils.inputs import create_input_field, create_dropdown_field
-from pages.utils.navigation import create_footer, create_navbar_product
+
 import flet as ft
-import datetime
+from pages.utils.inputs import create_input_field
+from pages.utils.navigation import create_footer, create_navbar_product
 from pages.utils.state import departamentos_data
-
-
+from pages.utils.Fecha import DatePickerField
+import datetime
 def ViewRegistroCivil(page):
     page.controls.clear()
     page.appbar = create_navbar_product(page)[0]
@@ -13,13 +13,26 @@ def ViewRegistroCivil(page):
     name_field = create_input_field("Nombres y apellidos completos del titular del registro")
     document_field = create_input_field("Número de Identificación del titular")
     number_serial_field = create_input_field("Número de serial del registro civil, si está disponible")
-    
+
     departamentos = departamentos_data["departamentos"]
     department_dropdown = ft.Dropdown(
+    border_radius=ft.border_radius.all(15),
+    content_padding=ft.padding.symmetric(horizontal=20, vertical=15),
+    bgcolor=ft.Colors.WHITE,
+    border_color="#717171",
+    label_style=ft.TextStyle(color="#717171"),
+    border_width=0.5,
     options=[ft.dropdown.Option(dept["nombre"]) for dept in departamentos],
     on_change=lambda e: update_cities(e),
 )
+
     city_dropdown = ft.Dropdown(
+        border_radius=ft.border_radius.all(15),
+        content_padding=ft.padding.symmetric(horizontal=20, vertical=15),
+        bgcolor=ft.Colors.WHITE,
+        border_color="#717171",
+        label_style=ft.TextStyle(color="#717171"),
+        border_width=0.5,
         options=[],
     )
 
@@ -33,23 +46,13 @@ def ViewRegistroCivil(page):
                 page.update()
                 break
 
-    def on_date_change(e):
-        selected_date = e.control.value.strftime("%Y-%m-%d")
-        birth_date_field.value = selected_date
-        page.update()
 
-    birth_date_field = ft.TextField(
-        border_radius=ft.border_radius.all(15),
-        content_padding=ft.padding.symmetric(horizontal=20, vertical=15),
-        bgcolor=ft.Colors.WHITE,
-        border_color="#717171",
-        label_style=ft.TextStyle(color="#717171"),
-        border_width=0.5,
-        value="",
-        expand=True,
-        filled=False,
-    )
-
+    today = datetime.datetime.now()
+    birth_date_field = DatePickerField(
+        name="Fecha de Nacimiento del titular",
+        first_date=datetime.datetime(year=1900, month=1, day=1),
+        last_date=today,
+    ) 
     def validate_and_confirm(e):
         if not name_field.controls[1].value.strip():
             ft.dialog.AlertDialog("El campo Nombres y Apellidos es obligatorio").open()
@@ -77,13 +80,17 @@ def ViewRegistroCivil(page):
                     ft.Text(f"Departamento: {department_dropdown.value}"),
                     ft.Text(f"Ciudad: {city_dropdown.value}"),
                     ft.Text(f"Fecha de Nacimiento: {birth_date_field.value}"),
+                    ft.Row(
+                        controls=[
+                            ft.Button("Cancelar", on_click=lambda e: close_dialog(dlg)),
+                            ft.Button("Guardar", on_click=lambda e: save_data(dlg)),
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        spacing=10,
+                    )
                 ],
                 spacing=10,
             ),
-            actions=[
-                ft.TextButton("Cancelar", on_click=lambda _: close_dialog(dlg)),
-                ft.TextButton("Confirmar", on_click=lambda _: save_data(dlg)),
-            ],
         )
         if page.overlay:
             page.overlay.pop()
@@ -94,7 +101,7 @@ def ViewRegistroCivil(page):
     def save_data(dlg):
         close_dialog(dlg)
         page.go("/checkout")
-        
+
     def close_dialog(dlg):
         dlg.open = False
         page.update()
@@ -134,46 +141,21 @@ def ViewRegistroCivil(page):
                                 ft.Text("Datos del Registro Civil Titular", text_align="left", size=20, weight="bold"),
                                 ft.Container(height=5),
                                 name_field,
-                                 ft.Column(
-                                    controls=[
-                                        ft.Text("Fecha de Nacimiento del titular", style=ft.TextStyle(color="#717171")),
-                                        ft.Row(
-                                            controls=[
-                                                birth_date_field,
-                                                ft.IconButton(
-                                                    icon=ft.Icons.CALENDAR_MONTH,
-                                                    icon_color="blue",
-                                                    on_click=lambda e: page.open(
-                                                        ft.DatePicker(
-                                                            first_date=datetime.datetime(year=2023, month=10, day=1),
-                                                            last_date=datetime.datetime(year=2024, month=10, day=1),
-                                                            on_change=on_date_change,
-                                                        )
-                                                    ),
-                                                ),
-                                            ],
-                                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                                        ),
-                                    ],
-                                    spacing=10,
-                                    horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
-                                ),
+                                birth_date_field,
                                 document_field,
                                 number_serial_field,
                                 ft.Column(
                                     controls=[
-                                        ft.Text("Departamento de Expedicion", style=ft.TextStyle(color="#717171")),
+                                        ft.Text("Departamento de Expedición", style=ft.TextStyle(color="#717171")),
                                         department_dropdown,
                                     ]
-                                    ),
-                                ft.Column(
-                                  controls=[
-                                        ft.Text("Ciudad de Expedicion", style=ft.TextStyle(color="#717171")),
-                                        city_dropdown,
-                                  ]  
                                 ),
-                               
-                                
+                                ft.Column(
+                                    controls=[
+                                        ft.Text("Ciudad de Expedición", style=ft.TextStyle(color="#717171")),
+                                        city_dropdown,
+                                    ]
+                                ),
                             ],
                         ),
                         save_button,

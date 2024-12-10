@@ -12,21 +12,21 @@ def WelcomeView(page):
                 ft.Container(
                     content=ft.Row(
                         [
-                            ft.Icon(ft.Icons.FLAG, color=ft.colors.YELLOW),
-                            ft.Text("Colombia", color=ft.colors.BLACK,
+                            ft.Icon(ft.Icons.FLAG, color=ft.Colors.YELLOW),
+                            ft.Text("Colombia", color=ft.Colors.BLACK,
                                     weight=ft.FontWeight.BOLD),
                         ],
                         spacing=5,
                     ),
                     border_radius=15,
                     padding=ft.padding.symmetric(horizontal=10, vertical=5),
-                    bgcolor=ft.colors.BLACK12,
+                    bgcolor=ft.Colors.BLACK12,
                 ),
                 ft.Text(
                     "Regístrate y simplifica tu vida",
                     size=18,
                     weight=ft.FontWeight.BOLD,
-                    color=ft.colors.WHITE,
+                    color=ft.Colors.WHITE,
                 ),
                 
                 ft.Row(
@@ -56,7 +56,7 @@ def WelcomeView(page):
                 "Continúa con tu celular",
                 icon=ft.Icons.PHONE,
                 style=ft.ButtonStyle(
-                    bgcolor=ft.colors.GREEN, color=ft.colors.WHITE, shape=ft.RoundedRectangleBorder(
+                    bgcolor=ft.Colors.GREEN, color=ft.Colors.WHITE, shape=ft.RoundedRectangleBorder(
                         radius=10)
                 ),
                 width=300,
@@ -66,7 +66,7 @@ def WelcomeView(page):
                 "Continúa con Apple",
                 icon=ft.Icons.APPLE,
                 style=ft.ButtonStyle(
-                    bgcolor=ft.colors.BLACK, color=ft.colors.WHITE, shape=ft.RoundedRectangleBorder(
+                    bgcolor=ft.Colors.BLACK, color=ft.Colors.WHITE, shape=ft.RoundedRectangleBorder(
                         radius=10)
                 ),
                 width=300,
@@ -77,7 +77,7 @@ def WelcomeView(page):
                 "Continúa con Google",
                 icon=ft.Icons.ABC_ROUNDED,
                 style=ft.ButtonStyle(
-                    bgcolor=ft.colors.BLUE, color=ft.colors.WHITE, shape=ft.RoundedRectangleBorder(
+                    bgcolor=ft.Colors.BLUE, color=ft.Colors.WHITE, shape=ft.RoundedRectangleBorder(
                         radius=10)
                 ),
                 width=300,
@@ -85,7 +85,7 @@ def WelcomeView(page):
             ),
             ft.TextButton(
                 "Soy usuario registrado",
-                style=ft.ButtonStyle(color=ft.colors.GREEN),
+                style=ft.ButtonStyle(color=ft.Colors.GREEN),
                 on_click=lambda e: navigate_to(e, "/login"),
             ),
         ],

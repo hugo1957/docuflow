@@ -1,3 +1,6 @@
+import io
+from PIL import Image, ImageDraw
+import flet.canvas as cv
 from pages.utils.dropdownFlag import CountryDropdown
 from pages.utils.state import departamentos_data
 from pages.utils.navigation import create_footer, create_navbar_product
@@ -26,6 +29,7 @@ from pages.Extras.Politicas_privacidad import ViewPrivacyPolicy
 from pages.Extras.Autorizacion_tratamiento_datos import ViewDataAuthorization
 # Data
 from pages.data.Registro_civil import ViewRegistroCivil
+from pages.data.Salida_menor import ViewRegistroMenores
 
 
 class ViewManager:
@@ -38,7 +42,7 @@ class ViewManager:
             return self.view_cache[route]
 
         if route == "/":
-            view = ViewRegistroMenores
+            view = WelcomeView
         elif route == "/phone-login":
             view = ViewLogin
         elif route == "/token":
@@ -140,217 +144,7 @@ async def main(page: ft.Page):
     page.on_view_pop = on_view_pop
 
     handle_navigation(page, view_manager, page.route)
-
-
-def on_country_selected(country_name):
-    print(f"Selected country: {country_name}")
-
-
-def ViewRegistroMenores(page):
-    page.controls.clear()
-    page.appbar = create_navbar_product(page)[0]
-    page.navigation_bar = create_footer(page)
-
-    # Campos principales del menor
-    name_field = create_input_field("Nombres y Apellidos del Menor")
-    document_field = create_input_field("Número de Identificación del Menor")
-    birth_certificate_field = create_input_field(
-        "Registro Civil de Nacimiento")
-    passport_field = create_input_field("Número de Pasaporte (si aplica)")
-    destination_field = CountryDropdown(on_country_change=on_country_selected)
-    purpose_field = create_input_field("Propósito del Viaje")
-    dates_field = create_input_field("Fechas de Salida y Regreso (AAAA-MM-DD)")
-    birth_date_field = create_input_field(
-        "Fecha de Nacimiento del Menor (AAAA-MM-DD)")
-
-    # Información del padre
-    father_name_field = create_input_field("Nombre del Padre")
-    father_id_field = create_input_field("Número de Identificación del Padre")
-    father_phone_field = create_input_field("Teléfono del Padre")
-    father_death_certificate_field = create_input_field(
-        "Registro Civil de Defunción (si fallecido)")
-    is_father_deceased = ft.Checkbox(
-        label="¿Padre fallecido?", on_change=lambda e: toggle_field_visibility(e, "father"))
-
-    # Información de la madre
-    mother_name_field = create_input_field("Nombre de la Madre")
-    mother_id_field = create_input_field(
-        "Número de Identificación de la Madre")
-    mother_phone_field = create_input_field("Teléfono de la Madre")
-    mother_death_certificate_field = create_input_field(
-        "Registro Civil de Defunción (si fallecida)")
-    is_mother_deceased = ft.Checkbox(
-        label="¿Madre fallecida?", on_change=lambda e: toggle_field_visibility(e, "mother"))
-
-    # Autorización escrita y casos especiales
-    authorization_written = create_input_field(
-        "Autorización Escrita del Padre/Madre (si aplica)")
-    patria_potestad = create_input_field(
-        "Sentencia Judicial de Patria Potestad (si aplica)")
-    special_case_checkbox = ft.Checkbox(
-        label="¿Aplica caso especial?", on_change=lambda e: toggle_field_visibility(e, "special_case"))
-
-    # Dropdowns para departamento y ciudad
-    departamentos = departamentos_data["departamentos"]
-    department_dropdown = ft.Dropdown(
-        options=[ft.dropdown.Option(dept["nombre"]) for dept in departamentos],
-        on_change=lambda e: update_cities(e),
-    )
-    city_dropdown = ft.Dropdown(options=[])
-
-    def update_cities(e):
-        selected_department = e.control.value
-        for dept in departamentos:
-            if dept["nombre"] == selected_department:
-                city_dropdown.options = [ft.dropdown.Option(
-                    city) for city in dept["ciudades"]]
-                city_dropdown.value = None
-                page.update()
-                break
-
-    def toggle_field_visibility(e, field_type):
-        if field_type == "father":
-            father_death_certificate_field.disabled = not e.control.value
-        elif field_type == "mother":
-            mother_death_certificate_field.disabled = not e.control.value
-        elif field_type == "special_case":
-            patria_potestad.disabled = not e.control.value
-        page.update()
-
-    def validate_and_confirm(e):
-        errors = []
-        # Validar campos obligatorios
-        required_fields = [
-            (name_field, "Nombres y Apellidos del Menor"),
-            (document_field, "Número de Identificación del Menor"),
-            (birth_certificate_field, "Registro Civil de Nacimiento"),
-            (destination_field, "Lugar de Destino del Viaje"),
-            (purpose_field, "Propósito del Viaje"),
-            (dates_field, "Fechas de Salida y Regreso"),
-        ]
-        for field, name in required_fields:
-            if not field.controls[1].value.strip():
-                errors.append(f"El campo '{name}' es obligatorio.")
-
-        if is_father_deceased.value and not father_death_certificate_field.controls[1].value.strip():
-            errors.append(
-                "Debe proporcionar el 'Registro Civil de Defunción del Padre' si ha fallecido.")
-        if is_mother_deceased.value and not mother_death_certificate_field.controls[1].value.strip():
-            errors.append(
-                "Debe proporcionar el 'Registro Civil de Defunción de la Madre' si ha fallecido.")
-        if special_case_checkbox.value and not patria_potestad.controls[1].value.strip():
-            errors.append(
-                "Debe proporcionar la sentencia judicial de patria potestad si aplica un caso especial.")
-        if not department_dropdown.value:
-            errors.append("Debe seleccionar un Departamento.")
-        if not city_dropdown.value:
-            errors.append("Debe seleccionar una Ciudad.")
-
-        if errors:
-            dlg = ft.AlertDialog(
-                title=ft.Text("Errores de Validación"),
-                content=ft.Text("\n".join(errors)),
-            )
-            dlg.open = True
-            page.overlay.append(dlg)
-            page.update()
-        else:
-            show_confirmation_dialog()
-
-    def show_confirmation_dialog():
-        dlg = ft.AlertDialog(
-            title=ft.Text("Confirmar Guardado"),
-            content=ft.Column(
-                controls=[
-                    ft.Text(f"Nombres del Menor: {
-                            name_field.controls[1].value}"),
-                    # Mostrar otros campos relevantes
-                ],
-                spacing=10,
-            ),
-            actions=[
-                ft.TextButton(
-                    "Cancelar", on_click=lambda _: close_dialog(dlg)),
-                ft.TextButton("Confirmar", on_click=lambda _: save_data(dlg)),
-            ],
-        )
-        page.overlay.append(dlg)
-        dlg.open = True
-        page.update()
-
-    def save_data(dlg):
-        dlg.open = False
-        page.go("/solicitud_guardada")
-
-    def close_dialog(dlg):
-        dlg.open = False
-        page.update()
-
-    save_button = ft.Container(
-        alignment=ft.alignment.center,
-        on_click=validate_and_confirm,
-        ink=True,
-        border_radius=ft.border_radius.all(35),
-        width=350,
-        height=40,
-        bgcolor="#25D366",
-        content=ft.Text("Guardar Solicitud", size=15,
-                        color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD),
-        padding=ft.padding.all(10),
-    )
-
-    container = ft.Column(
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-        expand=True,
-        spacing=0,
-        controls=[
-            ft.Text("Registro de Permiso de Salida",
-                    size=20, weight=ft.FontWeight.BOLD),
-            ft.Container(
-                padding=ft.padding.all(20),
-                expand=True,
-                content=ft.Column(
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
-                    scroll=ft.ScrollMode.HIDDEN,
-                    controls=[
-                        name_field,
-                        document_field,
-                        birth_certificate_field,
-                        passport_field,
-                        ft.Column(
-                            controls=[
-                                ft.Text("Lugar de Destino del Viaje",
-                                        style=ft.TextStyle(color="#717171")),
-                                destination_field,
-                            ]
-                        ),
-                        purpose_field,
-                        dates_field,
-                        is_father_deceased,
-                        father_name_field,
-                        father_id_field,
-                        father_phone_field,
-                        father_death_certificate_field,
-                        is_mother_deceased,
-                        mother_name_field,
-                        mother_id_field,
-                        mother_phone_field,
-                        mother_death_certificate_field,
-                        special_case_checkbox,
-                        authorization_written,
-                        patria_potestad,
-                        ft.Text("Departamento de Residencia del menor"),
-                        department_dropdown,
-                        ft.Text("Ciudad de Residencia del menor"),
-                        city_dropdown,
-                        save_button,
-                    ],
-                ),
-            ),
-        ],
-    )
-    return container
+    
 
 
 if __name__ == "__main__":
