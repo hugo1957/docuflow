@@ -61,6 +61,7 @@ def ViewProfile(page):
                                 ft.Container(height=5),
                                 ft.Text("Mi Perfil", text_align="left", size=20, weight="bold"),
                                 ft.Container(height=5),
+
                                 name_field,
                                 last_name_field,
                                 document_field,

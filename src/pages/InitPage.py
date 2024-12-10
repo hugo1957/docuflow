@@ -1,11 +1,11 @@
 import flet as ft
+
 def WelcomeView(page):
     def navigate_to(e, url):
         page.go(url)
 
     page.controls.clear()
 
-    # Encabezado
     header = ft.Container(
         content=ft.Column(
             controls=[
@@ -28,12 +28,11 @@ def WelcomeView(page):
                     weight=ft.FontWeight.BOLD,
                     color=ft.Colors.WHITE,
                 ),
-                
                 ft.Row(
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     controls=[
                         ft.Image(src="icon.png", width=120,
-                                        height=120, fit=ft.ImageFit.COVER),
+                                 height=120, fit=ft.ImageFit.COVER),
                         ft.Container()
                     ]
                 )
@@ -46,7 +45,6 @@ def WelcomeView(page):
         padding=ft.padding.all(20),
         expand=True,
         alignment=ft.alignment.center,
-       
     )
 
     # Botones de inicio
@@ -60,33 +58,54 @@ def WelcomeView(page):
                         radius=10)
                 ),
                 width=300,
-                on_click=lambda e: navigate_to(e, "/phone-login"),
+                on_click=lambda e: page.go("/phone-login"),
             ),
             ft.ElevatedButton(
-                "Continúa con Apple",
-                icon=ft.Icons.APPLE,
+                content=ft.Row(
+                    controls=[
+                        ft.Lottie(
+                            src="https://creativeferrets.com/assets/lottie/apple.json",
+                            animate=True,
+                            width=30,
+                            height=30,
+                        ),
+                        ft.Text("Continúa con Apple", color=ft.Colors.WHITE,expand=True),
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                    expand=True,
+                ),
                 style=ft.ButtonStyle(
                     bgcolor=ft.Colors.BLACK, color=ft.Colors.WHITE, shape=ft.RoundedRectangleBorder(
                         radius=10)
                 ),
                 width=300,
-                on_click=lambda e: navigate_to(e, "/apple-login"),
             ),
-            
             ft.ElevatedButton(
-                "Continúa con Google",
-                icon=ft.Icons.ABC_ROUNDED,
+                content=ft.Row(
+                    controls=[
+                        ft.Lottie(
+                            src="https://creativeferrets.com/assets/lottie/google.json",
+                            width=30,
+                            height=30,
+                        ),
+                        ft.Text("Continúa con Google", color=ft.Colors.WHITE,expand=True),
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                    expand=True,
+                ),
                 style=ft.ButtonStyle(
                     bgcolor=ft.Colors.BLUE, color=ft.Colors.WHITE, shape=ft.RoundedRectangleBorder(
-                        radius=10)
+                        radius=10),
                 ),
                 width=300,
-                on_click=lambda e: navigate_to(e, "/google-login"),
+
             ),
             ft.TextButton(
                 "Soy usuario registrado",
                 style=ft.ButtonStyle(color=ft.Colors.GREEN),
-                on_click=lambda e: navigate_to(e, "/login"),
+                on_click=lambda e: page.go("/login"),
             ),
         ],
         spacing=10,
@@ -94,7 +113,6 @@ def WelcomeView(page):
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
-    # Contenedor principal
     main_container = ft.Container(
         padding=ft.padding.all(10),
         alignment=ft.alignment.center,

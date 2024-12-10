@@ -62,7 +62,13 @@ def create_navbar_home(page):
     cart_icon = ft.Container(
         content=ft.Stack(
             [
-                ft.Icon(ft.Icons.SHOPPING_CART, color="white", size=24),
+                ft.Lottie(
+                    src="https://creativeferrets.com/assets/lottie/cart.json",
+                    animate=True,
+                    width=30,
+                    height=30,
+                    
+                    ),
                 ft.Container(
                     content=cart_count,
                     bgcolor="red",
@@ -109,7 +115,13 @@ def create_navbar_product(page):
     cart_icon = ft.Container(
         content=ft.Stack(
             [
-                ft.Icon(ft.Icons.SHOPPING_CART, color="black", size=24),
+                ft.Lottie(
+                    src="https://creativeferrets.com/assets/lottie/cart.json",
+                    animate=True,
+                    width=30,
+                    height=30,
+                    
+                    ),
                 ft.Container(
                     content=cart_count,
                     bgcolor="red",

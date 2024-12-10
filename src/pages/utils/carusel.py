@@ -90,11 +90,10 @@ def create_carousel(page):
             ],
         ),
     )
-
-    # Iniciar el bucle asincrónico para rotar las imágenes
+    
     def start_carousel_rotation():
         asyncio.run(auto_rotate_carousel())
 
-    page.on_view_pop = start_carousel_rotation  # Se inicia cuando se carga la página
-
+    page.on_view_pop = start_carousel_rotation 
+    
     return carousel

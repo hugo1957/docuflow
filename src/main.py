@@ -1,27 +1,23 @@
-import io
-from PIL import Image, ImageDraw
-import flet.canvas as cv
-from pages.utils.dropdownFlag import CountryDropdown
-from pages.utils.state import departamentos_data
-from pages.utils.navigation import create_footer, create_navbar_product
-from pages.utils.inputs import create_input_field, create_dropdown_field
 import flet as ft
 import re
 import os
-from pages.home import ViewHome
-from pages.auth.Profile import ViewProfile
-from pages.ProductDetail import ViewProductDetail
-from pages.Cart import ViewCart
-from pages.auth.PageNotFound import PageNotFound
-from pages.PaymentSuccess import ViewPaymentSuccess
-from pages.Checkout import ViewCheckout
-from pages.auth.Login import ViewLogin
-from pages.auth.Token import ViewToken
-from pages.Favorites import ViewFavorites
-from pages.Order import ViewOrders
-from pages.OrderDetail import ViewOrderDetail
+from pages.Tienda.home import ViewHome
+# Tienda
+from pages.Tienda.ProductDetail import ViewProductDetail
+from pages.Tienda.Cart import ViewCart
+from pages.Tienda.PaymentSuccess import ViewPaymentSuccess
+from pages.Tienda.Checkout import ViewCheckout
+from pages.Tienda.Favorites import ViewFavorites
+from pages.Tienda.Order import ViewOrders
+from pages.Tienda.OrderDetail import ViewOrderDetail
+
+
 from pages.User import ViewUser
 from pages.Domiciliario.RegisterDomi import ViewRegisterDomiciliario
+from pages.auth.Login import ViewLogin
+from pages.auth.Token import ViewToken
+from pages.auth.PageNotFound import PageNotFound
+from pages.auth.Profile import ViewProfile
 from pages.InitPage import WelcomeView
 # Extras
 from pages.Extras.Terminos_condiciones import ViewTermsAndConditions
@@ -144,7 +140,6 @@ async def main(page: ft.Page):
     page.on_view_pop = on_view_pop
 
     handle_navigation(page, view_manager, page.route)
-    
 
 
 if __name__ == "__main__":

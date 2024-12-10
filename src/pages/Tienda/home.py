@@ -130,6 +130,50 @@ def ViewHome(page):
     )
     dynamic_content = ft.Container(content=create_tab_content(0))
     update_tab_colors(0)
+    
+    redes_sociales = ft.Column(
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Text(
+                    "Redes Sociales",
+                    size=15,
+                    weight=ft.FontWeight.BOLD,
+                    text_align=ft.TextAlign.CENTER,
+                ),
+                ft.Row(
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    controls=[
+                        ft.Container(
+                            content=ft.Lottie(
+                                src="https://creativeferrets.com/assets/lottie/facebook.json",reverse=False,
+                    animate=True),
+                            width=40,
+                            height=40,
+                          
+                        ),
+                        ft.VerticalDivider(thickness=3),
+                        ft.Container(
+                            content=ft.Lottie(
+                                src="https://creativeferrets.com/assets/lottie/instagram.json",reverse=False,
+                    animate=True),
+                            width=40,
+                            height=40,
+                           
+                        ),
+                        ft.VerticalDivider(thickness=3),
+                        ft.Container(
+                            content=ft.Lottie(
+                                src="https://creativeferrets.com/assets/lottie/youtube.json",reverse=False,
+                    animate=True),
+                            width=40,
+                            height=40,
+                            
+                        )
+                    ]
+                )
+            ]
+        )
     container = ft.Container(
         padding=ft.padding.all(0),
         content=ft.Column(
@@ -183,6 +227,8 @@ def ViewHome(page):
                         ),
                         tabs,
                         dynamic_content,
+                        
+                        redes_sociales
                     ],
                 ),
             ],
