@@ -12,8 +12,8 @@ def ViewCart(page):
     cart_items_container = ft.Column(spacing=10)
     total_price_text = ft.Text("", size=20, weight=ft.FontWeight.BOLD)
     checkout_button = ft.ElevatedButton(
-        text="Proceder al pago",
-        on_click=lambda e: page.go("/checkout"),
+        text="Verificar Datos",
+        on_click=lambda e: page.go("/registro-civil"),
         bgcolor="#e5bc16",
         color="white",
         width=200,

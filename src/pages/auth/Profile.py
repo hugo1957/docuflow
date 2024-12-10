@@ -17,7 +17,12 @@ def ViewProfile(page):
     city_field = create_input_field("Ciudad expedición")
     deparment_field = create_input_field("Departamento")
     notaria_registraduria = create_input_field("Notaría, Número o Registraduría")
-
+    direccion = create_input_field("Dirección")
+    ciudad = create_input_field("Ciudad")
+    estado_provincia = create_input_field("Estado/Provincia")
+    zip = create_input_field("Código Postal")
+    pais = create_dropdown_field(
+            "País", options=["Colombia", "Ecuador", "Perú", "Otro"])
     def on_date_change(e):
         selected_date = e.control.value.strftime("%Y-%m-%d")
         birth_date_field.value = selected_date
@@ -85,6 +90,13 @@ def ViewProfile(page):
                                     spacing=10,
                                     horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
                                 ),
+                                ft.Container(height=5),
+                                ft.Text("Ubicacion", text_align="left", size=20, weight="bold"),
+                                direccion,
+                                ciudad,
+                                estado_provincia,
+                                zip,
+                                pais,
                                 ft.Container(height=5),
                                 ft.Text("Para más DocuFlow", text_align="left", size=20, weight="bold"),
                                 register_number_field,
