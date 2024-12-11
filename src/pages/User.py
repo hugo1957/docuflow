@@ -1,7 +1,7 @@
 from pages.utils.navigation import create_navbar_product, create_footer
 from functools import partial
 import flet as ft
-
+from pages.endpoints.Auth import logout_user
 def ViewUser(page):
     page.controls.clear()
     page.appbar = create_navbar_product(page)[0]
@@ -30,15 +30,15 @@ def ViewUser(page):
                 ft.TextButton("Cerrar sesión", on_click=lambda _: confirm_logout(dlg)),
             ],
         )
-        if page.overlay:  # Verifica si hay elementos en el overlay antes de eliminarlos
+        if page.overlay:
             page.overlay.pop()
         page.overlay.append(dlg)
         dlg.open = True
         page.update()
 
     def confirm_logout(dlg):
-        close_dialog(dlg)  # Cierra el diálogo
-        page.go("/")  # Redirige al inicio
+        close_dialog(dlg)
+        logout_user(page)
         page.update()
 
     def close_dialog(dlg):

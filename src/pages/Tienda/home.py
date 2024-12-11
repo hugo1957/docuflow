@@ -3,7 +3,7 @@ from pages.utils.navigation import create_footer
 from pages.utils.navigation import create_navbar_home
 from pages.utils.image import create_image_with_loader
 from pages.utils.carusel import create_carousel
-
+from pages.endpoints.Auth import refresh_token, load_user, logout_user
 def ViewHome(page):
     page.controls.clear()
     navbar = create_navbar_home(page)[0]
@@ -11,6 +11,21 @@ def ViewHome(page):
     page.navigation_bar = create_footer(page)
     page.update()
 
+    try:
+        access_token = page.client_storage.get("creativeferrets.tienda.access_token")
+        if not access_token:
+            refresh_token(page)
+            access_token = page.client_storage.get("creativeferrets.tienda.access_token")
+        if access_token:
+            load_user(page)
+        else:
+            page.go("/phone-login")
+            return
+    except Exception as e:
+        print(f"Error en la autenticación: {e}")
+        page.go("/phone-login")
+        return
+    
     def create_tab_content(index):
         categories = [
             "Registro Civil",

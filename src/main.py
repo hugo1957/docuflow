@@ -1,9 +1,3 @@
-import asyncio
-from pages.utils.carusel import create_carousel
-from pages.utils.image import create_image_with_loader
-from pages.utils.navigation import create_navbar_home
-from threading import Timer
-from pages.utils.navigation import create_footer
 import flet as ft
 import re
 import os
@@ -146,9 +140,6 @@ async def main(page: ft.Page):
     page.on_view_pop = on_view_pop
 
     handle_navigation(page, view_manager, page.route)
-
-
-
 
 
 if __name__ == "__main__":

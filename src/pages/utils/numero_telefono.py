@@ -6,6 +6,8 @@ class PhoneInputDropdown(ft.UserControl):
         super().__init__()
         self.on_country_change = on_country_change
         self.on_phone_change = on_phone_change
+        if self.on_phone_change:
+            self.on_phone_change(self.phone_field.value)
 
         self.country_data = {
             "+93": {"flag": "flags/af.png", "length": 9},
@@ -260,6 +262,7 @@ class PhoneInputDropdown(ft.UserControl):
         self.phone_field = ft.TextField(
             max_length=self.country_data[self.selected_country]["length"],
             width=250,
+            on_change=lambda e: self.on_phone_change(self.phone_field.value),
             height=60,
             border_radius=ft.border_radius.all(15),
             content_padding=ft.padding.symmetric(horizontal=20, vertical=15),
