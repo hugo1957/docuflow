@@ -27,5 +27,5 @@ path = "src"
 color = "#007354"
 dark_color = "#007354"
 web = false 
-ios = false  
-android = false 
+ios = true
+android = true 

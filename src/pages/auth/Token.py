@@ -60,7 +60,7 @@ def ViewToken(page):
                     controls=[
                         ft.Container(height=5),
                         ft.Text("Verificación de Código", size=20, color=ft.Colors.BLACK, weight=ft.FontWeight.W_100),
-                        ft.Text("Ingresa el código de 6 dígitos que recibiste", size=15, color=ft.Colors.BLACK),
+                        ft.Text("Ingresa el código de 6 dígitos que recibiste por SMS o WhastApp", size=15, color=ft.Colors.BLACK),
                         ft.Row(
                             controls=token_fields,
                             alignment=ft.MainAxisAlignment.CENTER,
@@ -73,11 +73,7 @@ def ViewToken(page):
                             border_radius=ft.border_radius.all(5),
                             width=350,
                             height=50,
-                            gradient=ft.LinearGradient(
-                                begin=ft.alignment.top_left,
-                                end=ft.Alignment(0.8, 1),
-                                colors=["#717171", "#e5bc16"],
-                            ),
+                            bgcolor=ft.Colors.GREEN,
                             content=ft.Text("Verificar Código", size=15, color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD),
                             padding=ft.padding.all(10),
                         ),

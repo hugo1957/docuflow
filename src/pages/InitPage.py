@@ -1,26 +1,28 @@
+
 import flet as ft
 
 def WelcomeView(page):
-    def navigate_to(e, url):
-        page.go(url)
 
     page.controls.clear()
-
+    
     header = ft.Container(
         content=ft.Column(
             controls=[
                 ft.Container(
+                    alignment=ft.alignment.center,
                     content=ft.Row(
                         [
-                            ft.Icon(ft.Icons.FLAG, color=ft.Colors.YELLOW),
-                            ft.Text("Colombia", color=ft.Colors.BLACK,
+                            ft.Image(src="flags/co.png", width=20),
+                            ft.Text("Colombia", color=ft.Colors.WHITE,
                                     weight=ft.FontWeight.BOLD),
                         ],
                         spacing=5,
+                        alignment=ft.MainAxisAlignment.CENTER,
                     ),
                     border_radius=15,
                     padding=ft.padding.symmetric(horizontal=10, vertical=5),
                     bgcolor=ft.Colors.BLACK12,
+                    width=120,
                 ),
                 ft.Text(
                     "Regístrate y simplifica tu vida",
@@ -28,19 +30,11 @@ def WelcomeView(page):
                     weight=ft.FontWeight.BOLD,
                     color=ft.Colors.WHITE,
                 ),
-                ft.Row(
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                    controls=[
-                        ft.Image(src="icon.png", width=120,
-                                 height=120, fit=ft.ImageFit.COVER),
-                        ft.Container()
-                    ]
-                )
+
             ],
             alignment=ft.MainAxisAlignment.START,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=10,
-            expand=True,
         ),
         padding=ft.padding.all(20),
         expand=True,
@@ -63,6 +57,7 @@ def WelcomeView(page):
             ft.ElevatedButton(
                 content=ft.Row(
                     controls=[
+                        ft.Container(width=40),
                         ft.Lottie(
                             src="https://creativeferrets.com/assets/lottie/apple.json",
                             animate=True,
@@ -84,6 +79,7 @@ def WelcomeView(page):
             ft.ElevatedButton(
                 content=ft.Row(
                     controls=[
+                        ft.Container(width=40),
                         ft.Lottie(
                             src="https://creativeferrets.com/assets/lottie/google.json",
                             width=30,
@@ -93,7 +89,7 @@ def WelcomeView(page):
                     ],
                     alignment=ft.MainAxisAlignment.CENTER,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                    expand=True,
+                    
                 ),
                 style=ft.ButtonStyle(
                     bgcolor=ft.Colors.BLUE, color=ft.Colors.WHITE, shape=ft.RoundedRectangleBorder(
