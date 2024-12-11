@@ -4,6 +4,9 @@ version = "0.0.1"
 description = ""
 readme = "README.md"
 requires-python = ">=3.8"
+authors = [
+  {name = "Jesus Delgado", email = "themurder261@gmail.com"}
+]
 dependencies = [
   "flet==0.25.1",
   "requests",
@@ -29,3 +32,8 @@ dark_color = "#007354"
 web = false 
 ios = false  
 android = false 
+
+[tool.flet.android]
+adaptive_icon_background = "" # --android-adaptive-icon-background
+split_per_abi = false # --split-per-abi
+
