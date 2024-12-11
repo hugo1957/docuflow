@@ -1,6 +1,5 @@
 import flet as ft
 from pages.utils.navigation import create_footer
-from threading import Timer
 from pages.utils.navigation import create_navbar_home
 from pages.utils.image import create_image_with_loader
 from pages.utils.carusel import create_carousel
@@ -11,6 +10,7 @@ def ViewHome(page):
     page.appbar = navbar
     page.navigation_bar = create_footer(page)
     page.update()
+
     def create_tab_content(index):
         categories = [
             "Registro Civil",
@@ -126,56 +126,84 @@ def ViewHome(page):
                     border_radius=ft.border_radius.all(10),
                 )
             ),
+            ft.Tab(
+              tab_content=ft.Container(
+                content=ft.Column(
+                    controls=[
+                        ft.Text("Enrolamiento", size=15, color=ft.Colors.BLACK),
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                alignment=ft.alignment.center,
+                padding=ft.padding.symmetric(horizontal=10, vertical=5),
+                border_radius=ft.border_radius.all(10),
+              )  
+            ),
+            ft.Tab(
+                tab_content=ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Text("Permiso Viajes de Menores", size=15, color=ft.Colors.BLACK),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    alignment=ft.alignment.center,
+                    padding=ft.padding.symmetric(horizontal=10, vertical=5),
+                    border_radius=ft.border_radius.all(10),
+                )  
+                ),
+
         ],
     )
     dynamic_content = ft.Container(content=create_tab_content(0))
     update_tab_colors(0)
-    
+
     redes_sociales = ft.Column(
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            controls=[
-                ft.Text(
-                    "Redes Sociales",
-                    size=15,
-                    weight=ft.FontWeight.BOLD,
-                    text_align=ft.TextAlign.CENTER,
-                ),
-                ft.Row(
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    controls=[
-                        ft.Container(
-                            content=ft.Lottie(
-                                src="https://creativeferrets.com/assets/lottie/facebook.json",reverse=False,
-                    animate=True),
-                            width=40,
-                            height=40,
-                          
-                        ),
-                        ft.VerticalDivider(thickness=3),
-                        ft.Container(
-                            content=ft.Lottie(
-                                src="https://creativeferrets.com/assets/lottie/instagram.json",reverse=False,
-                    animate=True),
-                            width=40,
-                            height=40,
-                           
-                        ),
-                        ft.VerticalDivider(thickness=3),
-                        ft.Container(
-                            content=ft.Lottie(
-                                src="https://creativeferrets.com/assets/lottie/youtube.json",reverse=False,
-                    animate=True),
-                            width=40,
-                            height=40,
-                            
-                        )
-                    ]
-                )
-            ]
-        )
+        alignment=ft.MainAxisAlignment.CENTER,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        controls=[
+            ft.Text(
+                "Redes Sociales",
+                size=15,
+                weight=ft.FontWeight.BOLD,
+                text_align=ft.TextAlign.CENTER,
+            ),
+            ft.Row(
+                alignment=ft.MainAxisAlignment.CENTER,
+                controls=[
+                    ft.Container(
+                        content=ft.Lottie(
+                            src="https://creativeferrets.com/assets/lottie/facebook.json", reverse=False,
+                            animate=True),
+                        width=40,
+                        height=40,
+
+                    ),
+                    ft.VerticalDivider(thickness=3),
+                    ft.Container(
+                        content=ft.Lottie(
+                            src="https://creativeferrets.com/assets/lottie/instagram.json", reverse=False,
+                            animate=True),
+                        width=40,
+                        height=40,
+
+                    ),
+                    ft.VerticalDivider(thickness=3),
+                    ft.Container(
+                        content=ft.Lottie(
+                            src="https://creativeferrets.com/assets/lottie/youtube.json", reverse=False,
+                            animate=True),
+                        width=40,
+                        height=40,
+
+                    )
+                ]
+            )
+        ]
+    )
     container = ft.Container(
         padding=ft.padding.all(0),
+        alignment=ft.alignment.center,
         content=ft.Column(
             spacing=0,
             controls=[
@@ -185,7 +213,7 @@ def ViewHome(page):
                     content=ft.TextField(
                         bgcolor=ft.Colors.WHITE,
                         color=ft.Colors.BLACK,
-                        label="Buscar en DocuFlow.com",
+                        label="Buscar en docuflowapp.com",
                         prefix_icon=ft.Icons.SEARCH,
                     ),
                 ),
@@ -221,13 +249,12 @@ def ViewHome(page):
                         ),
                         ft.Container(
                             expand=True,
-                            
+                            alignment=ft.alignment.center,
                             content=create_carousel(page),
                             padding=ft.padding.all(15),
                         ),
                         tabs,
                         dynamic_content,
-                        
                         redes_sociales
                     ],
                 ),
@@ -235,7 +262,6 @@ def ViewHome(page):
         ),
     )
     return container
-
 
 def create_content(page, image, name, valor, url):
     return ft.Container(
@@ -247,12 +273,45 @@ def create_content(page, image, name, valor, url):
         bgcolor=ft.Colors.GREY_100,
         content=ft.Column(
             controls=[
-                create_image_with_loader(
-                    src=image,
-                    width=200,
-                    height=140,
-                    fit=ft.ImageFit.COVER,
-                    border_radius=ft.border_radius.all(15),
+                ft.Row(
+                    controls=[
+                        ft.Container(
+                            width=10,
+                            height=10,
+                        ),
+                        ft.IconButton(
+                            icon=ft.Icons.SHOPPING_CART_OUTLINED,
+                            icon_color=ft.Colors.WHITE,
+                            bgcolor="#e5bc16",
+                            on_click=lambda e: page.go(
+                                f"/product-detail/{url}"),
+                        ),
+                        
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ),
+                ft.Container(
+                    alignment=ft.alignment.center,
+                    width=150,  # Ajusta el ancho para simular la lámpara
+                    height=200,  # Altura de la forma de la lámpara
+                    border_radius=ft.BorderRadius(
+                        top_left=75,  # Más redondeado en la parte superior
+                        top_right=75,
+                        bottom_left=40,  # Menos redondeado en la parte inferior
+                        bottom_right=40,
+                    ),
+                    bgcolor="#f0f0f0",  # Color del contenedor de la imagen
+                    shadow=ft.BoxShadow(
+                        blur_radius=15,
+                        spread_radius=5,
+                        color="rgba(0,0,0,0.2)",
+                    ),
+                    content=create_image_with_loader(
+                        src=image,
+                        width=150,
+                        height=200,
+                        fit=ft.ImageFit.COVER,
+                    ),
                 ),
                 ft.Text(
                     name,
@@ -262,26 +321,10 @@ def create_content(page, image, name, valor, url):
                     overflow=ft.TextOverflow.ELLIPSIS,
                 ),
                 ft.Text("Deep Foam", size=14, color="#717171"),
-                ft.Row(
-                    controls=[
-                        ft.Text(f"${valor}", size=18, weight=ft.FontWeight.BOLD),
-                        ft.Container(
-                            content=ft.IconButton(
-                                icon=ft.Icons.SHOPPING_CART_OUTLINED,
-                                icon_color=ft.Colors.WHITE,
-                                bgcolor="#e5bc16",
-                                on_click=lambda e: page.go(f"/product-detail/{url}"),
-                            ),
-                            border_radius=ft.border_radius.all(8),
-                            width=40,
-                            height=40,
-                            bgcolor="#e5bc16",
-                        ),
-                    ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                ),
+                ft.Text(f"${valor}", size=18,
+                        weight=ft.FontWeight.BOLD),
             ],
-            spacing=10,
+            spacing=0,
         ),
     )
 

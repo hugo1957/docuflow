@@ -1,12 +1,13 @@
+
 import flet as ft
 import asyncio
 
 def create_carousel(page):
     # Lista de imágenes
     images = [
-        {"src": "banner/1.png", "alt": "Banner 1"},
-        {"src": "Autenticacion/1.jpeg", "alt": "Banner 2"},
-        {"src": "banner/2.png", "alt": "Banner 3"},
+        {"src": "Autenticacion/1.jpeg", "alt": "Banner 1"},
+        {"src": "Autenticacion/2.jpeg", "alt": "Banner 2"},
+        {"src": "Autenticacion/3.jpeg", "alt": "Banner 3"},
     ]
     active_index = 0
 
@@ -16,10 +17,10 @@ def create_carousel(page):
                 src=images[0]["src"],
                 width="100%",
                 height="100%",
-                fit=ft.ImageFit.CONTAIN,  # Ocupa todo el contenedor
+                fit=ft.ImageFit.CONTAIN,
             ),
-            width=page.width,
-            height=200,
+            width=300,
+            height=100,
             border_radius=ft.border_radius.all(15),
             clip_behavior=ft.ClipBehavior.HARD_EDGE,
         ),
@@ -38,8 +39,8 @@ def create_carousel(page):
                 src=images[active_index]["src"],
                 fit=ft.ImageFit.COVER,
             ),
-            width=page.width,
-            height=200,
+            width=300,
+            height=100,
             border_radius=ft.border_radius.all(15),
             clip_behavior=ft.ClipBehavior.HARD_EDGE,
         )
@@ -71,16 +72,22 @@ def create_carousel(page):
     )
 
     carousel = ft.Container(
-        width=page.width,
-        
+        width=300,
+        alignment=ft.alignment.center,
+        border_radius=ft.border_radius.all(15),
         content=ft.Column(
-            expand=True,
             alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
                 ft.Container(
-                    width=page.width,
-                    height=200,
+                    width=300,
+                    height=100,
                     content=animated_image,
+                    shadow=ft.BoxShadow(
+                        blur_radius=15,
+                        spread_radius=5,
+                        color="rgba(0,0,0,0.2)",
+                    ),
                 ),
                 ft.Container(
                     alignment=ft.alignment.center,
@@ -90,10 +97,10 @@ def create_carousel(page):
             ],
         ),
     )
-    
+
     def start_carousel_rotation():
         asyncio.run(auto_rotate_carousel())
 
-    page.on_view_pop = start_carousel_rotation 
-    
+    page.on_view_pop = start_carousel_rotation
+
     return carousel

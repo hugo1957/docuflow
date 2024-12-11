@@ -41,24 +41,55 @@ def ViewLogin(page):
                 ft.Container(height=20),
                 ft.Text("Número de teléfono", style=ft.TextStyle(color="#717171")),
                 phone_input,
+                ft.Container(height=20),
                 ft.Container(
-                    
                     alignment=ft.alignment.center,
                     on_click=handle_submit,
-                    border_radius=ft.border_radius.all(5),
+                    border_radius=ft.border_radius.all(15),
                     height=50,
-                    gradient=ft.LinearGradient(
-                        begin=ft.alignment.top_left,
-                        end=ft.Alignment(0.8, 1),
-                        colors=["#717171", "#e5bc16"],
-                    ),
-                    content=ft.Text(
-                        "Iniciar Sesión",
-                        size=15,
-                        color=ft.Colors.WHITE,
-                        weight=ft.FontWeight.BOLD,
-                    ),
+                    bgcolor=ft.Colors.GREEN,
+                    content=ft.Row(
+                        controls=[
+                            ft.Icon(ft.Icons.PHONE, color=ft.Colors.WHITE),
+                            ft.Text(
+                                "Recibir código por SMS",
+                                size=15,
+                                color=ft.Colors.WHITE,
+                                weight=ft.FontWeight.BOLD,
+                            ),
+                            ft.Container(width=10),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        vertical_alignment=ft.alignment.center,
+                    )
                 ),
+                ft.Container(
+                    alignment=ft.alignment.center,
+                    on_click=handle_submit,
+                    border_radius=ft.border_radius.all(15),
+                    height=50,
+                    bgcolor=ft.Colors.GREEN,
+                    content=ft.Row(
+                        controls=[
+                            
+                            ft.Lottie(
+                                src="https://creativeferrets.com/assets/lottie/whastapp.json",
+                                animate=True,
+                                width=30,
+                                height=30,
+                                ),
+                            ft.Text(
+                                "Recibir código por WhatsApp",
+                                size=15,
+                                color=ft.Colors.WHITE,
+                                weight=ft.FontWeight.BOLD,
+                            ),
+                            ft.Container(width=10),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        vertical_alignment=ft.alignment.center,
+                    )
+                )
             ]
         )
     )
