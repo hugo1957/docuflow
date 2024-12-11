@@ -14,10 +14,16 @@ def ViewProfile(page):
     try:
         user_data = page.client_storage.get("creativeferrets.tienda.user")
     except TimeoutError:
-        return ft.SnackBar(ft.Text("Error al cargar los datos del usuario."), bgcolor=ft.Colors.RED)
+        snack_bar = ft.SnackBar(ft.Text("Error al cargar los datos del usuario."), bgcolor=ft.Colors.RED)
+        page.overlay.append(snack_bar)
+        snack_bar.open = True
+        page.update()
     
     if not user_data:
-        return ft.SnackBar(ft.Text("Error al cargar los datos del usuario."), bgcolor=ft.Colors.RED)
+        snack_bar = ft.SnackBar(ft.Text("No se encontraron datos del usuario."), bgcolor=ft.Colors.RED)
+        page.overlay.append(snack_bar)
+        snack_bar.open = True
+        page.update()
 
     user_id = user_data["id"]
 
@@ -39,7 +45,10 @@ def ViewProfile(page):
 
     full_user_data = fetch_user_data()
     if not full_user_data:
-        return ft.SnackBar(ft.Text("No se pudieron cargar los datos completos."), bgcolor=ft.Colors.RED)
+        snack_bar = ft.SnackBar(ft.Text("No se encontraron datos del usuario."), bgcolor=ft.Colors.RED)
+        page.overlay.append(snack_bar)
+        snack_bar.open = True
+        page.update()
     
 
     name_field = create_input_field("Nombres")
@@ -106,19 +115,19 @@ def ViewProfile(page):
             "last_name": last_name_field.controls[1].value,
             "document_number": document_field.controls[1].value,
             "email": email_field.controls[1].value,
-            "phone": phone_field.controls[1].value, 
+            "phone_number": phone_field.controls[1].value, 
             "birth_date": birth_date_field.value,
-            "direccion": direccion.controls[1].value,
-            "ciudad": ciudad.controls[1].value,
-            "estado_provincia": estado_provincia.controls[1].value,
-            "zip": zip.controls[1].value,
-            "pais": pais.controls[1].value,
-            "register_number": register_number_field.controls[1].value,
-            "city": city_field.controls[1].value,
+            "address": direccion.controls[1].value,
+            "city": ciudad.controls[1].value,
+            "state_province": estado_provincia.controls[1].value,
+            "zip_code": zip.controls[1].value,
+            "country": pais.controls[1].value,
+            "civil_register_number": register_number_field.controls[1].value,
+            "expedition_city": city_field.controls[1].value,
             "department": deparment_field.controls[1].value,
-            "notaria_registraduria": notaria_registraduria.controls[1].value,
+            "notary_registry": notaria_registraduria.controls[1].value,
         }
-
+    
         try:
             access_token = page.client_storage.get("creativeferrets.tienda.access_token")
             response = requests.put(
@@ -130,13 +139,14 @@ def ViewProfile(page):
                 },
             )
             response.raise_for_status()
-            page.snack_bar = ft.SnackBar(ft.Text("Datos actualizados exitosamente."), bgcolor=ft.Colors.GREEN)
-            page.snack_bar.open()
+            snack_bar = ft.SnackBar(ft.Text("Datos actualizados correctamente."), bgcolor=ft.Colors.GREEN)
+            page.overlay.append(snack_bar)
+            snack_bar.open = True
             page.update()
         except requests.RequestException as ex:
-            page.snack_bar = ft.SnackBar(ft.Text("Error al actualizar los datos."), bgcolor=ft.Colors.RED)
-            page.snack_bar.open()
-            print(ex)
+            snack_bar = ft.SnackBar(ft.Text("Error al actualizar los datos."), bgcolor=ft.Colors.RED)
+            page.overlay.append(snack_bar)
+            snack_bar.open = True
             page.update()
 
     container = ft.Column(
