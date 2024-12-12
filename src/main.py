@@ -106,6 +106,7 @@ def configure_page(page: ft.Page):
     page.on_app_lifecycle_state_change = handle_app_event
 
 
+
 def handle_navigation(page, view_manager, route):
     params = {}
     if re.match(r"^/product-detail/.+", route):
@@ -140,6 +141,7 @@ async def main(page: ft.Page):
     page.on_view_pop = on_view_pop
 
     handle_navigation(page, view_manager, page.route)
+    
 
 
 if __name__ == "__main__":

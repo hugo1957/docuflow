@@ -1,10 +1,11 @@
-
 import flet as ft
 
 def WelcomeView(page):
-
     page.controls.clear()
-    
+    page.appbar = ft.CupertinoAppBar(bgcolor=ft.Colors.WHITE, visible=False)
+    page.update()
+
+    # Header del contenedor
     header = ft.Container(
         content=ft.Column(
             controls=[
@@ -13,8 +14,7 @@ def WelcomeView(page):
                     content=ft.Row(
                         [
                             ft.Image(src="flags/co.png", width=20),
-                            ft.Text("Colombia", color=ft.Colors.WHITE,
-                                    weight=ft.FontWeight.BOLD),
+                            ft.Text("Colombia", color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD),
                         ],
                         spacing=5,
                         alignment=ft.MainAxisAlignment.CENTER,
@@ -30,7 +30,6 @@ def WelcomeView(page):
                     weight=ft.FontWeight.BOLD,
                     color=ft.Colors.WHITE,
                 ),
-
             ],
             alignment=ft.MainAxisAlignment.START,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -41,74 +40,160 @@ def WelcomeView(page):
         alignment=ft.alignment.center,
     )
 
-    # Botones de inicio
-    buttons = ft.Column(
-        [
-            ft.ElevatedButton(
-                "Continúa con tu celular",
-                icon=ft.Icons.PHONE,
-                style=ft.ButtonStyle(
-                    bgcolor=ft.Colors.GREEN, color=ft.Colors.WHITE, shape=ft.RoundedRectangleBorder(
-                        radius=10)
-                ),
-                width=300,
-                on_click=lambda e: page.go("/phone-login"),
-            ),
-            ft.ElevatedButton(
-                content=ft.Row(
-                    controls=[
-                        ft.Container(width=40),
-                        ft.Lottie(
-                            src="https://creativeferrets.com/assets/lottie/apple.json",
-                            animate=True,
-                            width=30,
-                            height=30,
-                        ),
-                        ft.Text("Continúa con Apple", color=ft.Colors.WHITE,expand=True),
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                    expand=True,
-                ),
-                style=ft.ButtonStyle(
-                    bgcolor=ft.Colors.BLACK, color=ft.Colors.WHITE, shape=ft.RoundedRectangleBorder(
-                        radius=10)
-                ),
-                width=300,
-            ),
-            ft.ElevatedButton(
-                content=ft.Row(
-                    controls=[
-                        ft.Container(width=40),
-                        ft.Lottie(
-                            src="https://creativeferrets.com/assets/lottie/google.json",
-                            width=30,
-                            height=30,
-                        ),
-                        ft.Text("Continúa con Google", color=ft.Colors.WHITE,expand=True),
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                    
-                ),
-                style=ft.ButtonStyle(
-                    bgcolor=ft.Colors.BLUE, color=ft.Colors.WHITE, shape=ft.RoundedRectangleBorder(
-                        radius=10),
-                ),
-                width=300,
+    # Función para crear botones con animación
+    def create_buttons():
+        buttons = []
 
-            ),
+        # Botón común para todas las plataformas
+        buttons.append(
+            ft.Container(
+                alignment=ft.alignment.center,
+                on_click=lambda e: page.go("/phone-login"),
+                border_radius=ft.border_radius.all(15),
+                height=50,
+                bgcolor=ft.Colors.GREEN,
+                content=ft.Row(
+                    controls=[
+                        ft.Icon(ft.Icons.PHONE, color=ft.Colors.WHITE),
+                        ft.Text(
+                            "Continúa con tu celular",
+                            size=15,
+                            color=ft.Colors.WHITE,
+                            weight=ft.FontWeight.BOLD,
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+            )
+        )
+
+        # Botón para Apple (solo en iOS)
+        if page.platform == ft.PagePlatform.IOS:
+            buttons.append(
+                ft.Container(
+                    alignment=ft.alignment.center,
+                    border_radius=ft.border_radius.all(15),
+                    height=50,
+                    bgcolor=ft.Colors.BLACK,
+                    content=ft.Row(
+                        controls=[
+                            ft.Lottie(
+                                src="https://creativeferrets.com/assets/lottie/apple.json",
+                                animate=True,
+                                width=30,
+                                height=30,
+                            ),
+                            ft.Text(
+                                "Continúa con Apple",
+                                size=15,
+                                color=ft.Colors.WHITE,
+                                weight=ft.FontWeight.BOLD,
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                )
+            )
+
+        # Botón para Google (solo en Android)
+        if page.platform == ft.PagePlatform.ANDROID:
+            buttons.append(
+                ft.Container(
+                    alignment=ft.alignment.center,
+                    border_radius=ft.border_radius.all(15),
+                    height=50,
+                    bgcolor=ft.Colors.BLUE,
+                    content=ft.Row(
+                        controls=[
+                            ft.Lottie(
+                                src="https://creativeferrets.com/assets/lottie/google.json",
+                                width=30,
+                                height=30,
+                            ),
+                            ft.Text(
+                                "Continúa con Google",
+                                size=15,
+                                color=ft.Colors.WHITE,
+                                weight=ft.FontWeight.BOLD,
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                )
+            )
+
+        # Mostrar todos los botones si no es ninguna de las plataformas
+        if page.platform not in [ft.PagePlatform.IOS, ft.PagePlatform.ANDROID]:
+            buttons.extend(
+                [
+                    ft.Container(
+                        alignment=ft.alignment.center,
+                        border_radius=ft.border_radius.all(15),
+                        height=50,
+                        bgcolor=ft.Colors.BLUE,
+                        content=ft.Row(
+                            controls=[
+                                ft.Lottie(
+                                    src="https://creativeferrets.com/assets/lottie/google.json",
+                                    width=30,
+                                    height=30,
+                                ),
+                                ft.Text(
+                                    "Continúa con Google",
+                                    size=15,
+                                    color=ft.Colors.WHITE,
+                                    weight=ft.FontWeight.BOLD,
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                        ),
+                    ),
+                    ft.Container(
+                        alignment=ft.alignment.center,
+                        border_radius=ft.border_radius.all(15),
+                        height=50,
+                        bgcolor=ft.Colors.BLACK,
+                        content=ft.Row(
+                            controls=[
+                                ft.Lottie(
+                                    src="https://creativeferrets.com/assets/lottie/apple.json",
+                                    animate=True,
+                                    width=30,
+                                    height=30,
+                                ),
+                                ft.Text(
+                                    "Continúa con Apple",
+                                    size=15,
+                                    color=ft.Colors.WHITE,
+                                    weight=ft.FontWeight.BOLD,
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                        ),
+                    ),
+                ]
+            )
+
+        buttons.append(
             ft.TextButton(
                 "Soy usuario registrado",
                 style=ft.ButtonStyle(color=ft.Colors.GREEN),
                 on_click=lambda e: page.go("/login"),
-            ),
-        ],
-        spacing=10,
-        alignment=ft.MainAxisAlignment.CENTER,
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-    )
+            )
+        )
 
+        return ft.AnimatedSwitcher(
+            content=ft.Column(
+                controls=buttons,
+                spacing=10,
+                alignment=ft.MainAxisAlignment.CENTER,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
+            transition=ft.AnimatedSwitcherTransition.SCALE,
+            duration=500,
+        )
+
+    # Contenedor principal
     main_container = ft.Container(
         padding=ft.padding.all(10),
         alignment=ft.alignment.center,
@@ -117,7 +202,7 @@ def WelcomeView(page):
         content=ft.Column(
             [
                 header,
-                buttons,
+                create_buttons(),
             ],
             spacing=20,
             alignment=ft.MainAxisAlignment.CENTER,

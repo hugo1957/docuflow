@@ -1,14 +1,30 @@
+from pages.utils.controls.numero_telefono import PhoneInputDropdown
 import flet as ft
 from pages.endpoints.Auth import login_user
-from pages.utils.numero_telefono import PhoneInputDropdown
 
 def ViewLogin(page):
     page.controls.clear()
-    page.appbar = ft.AppBar(bgcolor=ft.Colors.WHITE)
+    page.appbar = ft.AppBar(
+        leading=ft.IconButton(ft.Icons.ARROW_CIRCLE_LEFT,
+                            autofocus=False,on_click=lambda e: page.go("/"),
+        hover_color=ft.Colors.TRANSPARENT,icon_color="#007354"),
+        leading_width=60,
+        bgcolor=ft.Colors.WHITE)
     page.navigation_bar = None
     page.update()
 
-    phone_input = PhoneInputDropdown()
+    phone_state = {"was_visible": False}
+
+    def handle_phone_change(phone_number):
+        if len(phone_number) >= 3 and not phone_state["was_visible"]:
+            animated_switcher.content = visible_buttons()
+            phone_state["was_visible"] = True
+        elif len(phone_number) < 3 and phone_state["was_visible"]:
+            animated_switcher.content = hidden_buttons()
+            phone_state["was_visible"] = False
+        animated_switcher.update()
+
+    phone_input = PhoneInputDropdown(on_phone_change=handle_phone_change)
 
     confirm_dialog = ft.AlertDialog(
         modal=True,
@@ -56,66 +72,70 @@ def ViewLogin(page):
             page.update()
             return
         confirm_dialog.content.value = f"¿Es este tu número de teléfono?\n{full_phone}"
-        page.dialog = confirm_dialog
+
+        if confirm_dialog not in page.overlay:
+            page.overlay.append(confirm_dialog)
+
         confirm_dialog.open = True
         page.update()
 
-    def handle_phone_change(phone_number):
-        if len(phone_number) >= 3:
-            sms_button.visible = True
-            whatsapp_button.visible = True
-        else:
-            sms_button.visible = False
-            whatsapp_button.visible = False
-        page.update()
-
-    phone_input.on_phone_change = handle_phone_change
-
-    sms_button = ft.Container(
-        alignment=ft.alignment.center,
-        on_click=lambda e: open_confirm_dialog(),
-        border_radius=ft.border_radius.all(15),
-        height=50,
-        bgcolor=ft.Colors.GREEN,
-        visible=False,
-        content=ft.Row(
+    def visible_buttons():
+        return ft.Column(
             controls=[
-                ft.Icon(ft.Icons.PHONE, color=ft.Colors.WHITE),
-                ft.Text(
-                    "Recibir código por SMS",
-                    size=15,
-                    color=ft.Colors.WHITE,
-                    weight=ft.FontWeight.BOLD,
+                ft.Container(
+                    alignment=ft.alignment.center,
+                    on_click=lambda e: open_confirm_dialog(),
+                    border_radius=ft.border_radius.all(15),
+                    height=50,
+                    bgcolor=ft.Colors.GREEN,
+                    content=ft.Row(
+                        controls=[
+                            ft.Icon(ft.Icons.PHONE, color=ft.Colors.WHITE),
+                            ft.Text(
+                                "Recibir código por SMS",
+                                size=15,
+                                color=ft.Colors.WHITE,
+                                weight=ft.FontWeight.BOLD,
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
                 ),
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-        ),
-    )
+                ft.Container(
+                    alignment=ft.alignment.center,
+                    on_click=lambda e: open_confirm_dialog(),
+                    border_radius=ft.border_radius.all(15),
+                    height=50,
+                    border=ft.border.all(0.5, ft.Colors.GREEN),
+                    content=ft.Row(
+                        controls=[
+                            ft.Lottie(
+                                src="https://creativeferrets.com/assets/lottie/whastapp.json",
+                                animate=True,
+                                width=30,
+                                height=30,
+                            ),
+                            ft.Text(
+                                "Recibir código por WhatsApp",
+                                size=15,
+                                color=ft.Colors.GREEN,
+                                weight=ft.FontWeight.BOLD,
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                ),
+            ]
+        )
 
-    whatsapp_button = ft.Container(
-        alignment=ft.alignment.center,
-        on_click=lambda e: open_confirm_dialog(),
-        border_radius=ft.border_radius.all(15),
-        height=50,
-        bgcolor=ft.Colors.GREEN,
-        visible=False,
-        content=ft.Row(
-            controls=[
-                ft.Lottie(
-                    src="https://creativeferrets.com/assets/lottie/whastapp.json",
-                    animate=True,
-                    width=30,
-                    height=30,
-                ),
-                ft.Text(
-                    "Recibir código por WhatsApp",
-                    size=15,
-                    color=ft.Colors.WHITE,
-                    weight=ft.FontWeight.BOLD,
-                ),
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-        ),
+    def hidden_buttons():
+        return ft.Container()  # Contenedor vacío
+
+    animated_switcher = ft.AnimatedSwitcher(
+        content=hidden_buttons(),
+        transition=ft.AnimatedSwitcherTransition.FADE,
+        duration=500,
+        reverse_duration=300,
     )
 
     container = ft.Container(
@@ -126,12 +146,12 @@ def ViewLogin(page):
             expand=True,
             alignment=ft.MainAxisAlignment.START,
             controls=[
+                ft.Text("Ingresa tu número de teléfono", color=ft.Colors.BLACK, size=20, weight=ft.FontWeight.BOLD),
+                ft.Text("Te enviaremos un código de verificación para confirmarlo", style=ft.TextStyle(color="#717171")),
+                ft.Container(height=5),
+                phone_input,  
                 ft.Container(height=20),
-                ft.Text("Número de teléfono", style=ft.TextStyle(color="#717171")),
-                phone_input,
-                ft.Container(height=20),
-                sms_button,
-                whatsapp_button,
+                animated_switcher, 
             ],
         ),
     )

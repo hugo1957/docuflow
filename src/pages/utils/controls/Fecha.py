@@ -1,14 +1,18 @@
 import flet as ft
 import datetime
 
-class DatePickerField(ft.UserControl):
+class DatePickerField(ft.Column):
     def __init__(self, name="Fecha", first_date=None, last_date=None, on_change=None):
         super().__init__()
+        self.spacing = 5
+        self.alignment = ft.MainAxisAlignment.START
+
         self.name = name
         self.value = None
         self.first_date = first_date or datetime.datetime(year=1900, month=1, day=1)
         self.last_date = last_date or datetime.datetime(year=2100, month=12, day=31)
-        self.on_change = on_change 
+        self.on_change = on_change
+
         self.text_label = ft.Text(
             self.name,
             color="#717171",
@@ -25,6 +29,11 @@ class DatePickerField(ft.UserControl):
             border_width=0.5,
             on_click=self.open_date_picker,
         )
+
+        self.controls = [
+            self.text_label,
+            self.text_field,
+        ]
 
     def open_date_picker(self, e):
         date_picker = ft.DatePicker(
@@ -52,12 +61,3 @@ class DatePickerField(ft.UserControl):
             self.first_date = first_date
         if last_date:
             self.last_date = last_date
-
-    def build(self):
-        return ft.Column(
-            controls=[
-                self.text_label,
-                self.text_field,
-            ],
-            spacing=5,
-        )

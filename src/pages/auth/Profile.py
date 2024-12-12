@@ -1,6 +1,6 @@
-from pages.utils.inputs import create_input_field, create_dropdown_field
-from pages.utils.alert import show_construction_dialog
 from pages.utils.navigation import create_footer, create_navbar_product
+from pages.utils.controls.Fecha import DatePickerField
+from pages.utils.controls.inputs import MyInputField, MyDropdownField
 import flet as ft
 import datetime
 import requests
@@ -51,64 +51,33 @@ def ViewProfile(page):
         page.update()
     
 
-    name_field = create_input_field("Nombres")
-    name_field.controls[1].value = full_user_data.get("first_name", "")
-    
-    last_name_field = create_input_field("Apellidos")
-    last_name_field.controls[1].value = full_user_data.get("last_name", "")
-    
-    document_field = create_input_field("Número de Identificación")
-    document_field.controls[1].value = full_user_data.get("document", "")
-    
-    email_field = create_input_field("E-mail")
-    email_field.controls[1].value = full_user_data.get("email", "")
-    
-    phone_field = create_input_field("Celular")
-    phone_field.controls[1].value = full_user_data.get("phone", "")
-    
-    register_number_field = create_input_field("Número de Registro Civil")
-    register_number_field.controls[1].value = full_user_data.get("register_number", "")
-    
-    city_field = create_input_field("Ciudad expedición")
-    city_field.controls[1].value = full_user_data.get("city", "")
-    
-    deparment_field = create_input_field("Departamento")
-    deparment_field.controls[1].value = full_user_data.get("department", "")
-    
-    notaria_registraduria = create_input_field("Notaría, Número o Registraduría")
-    notaria_registraduria.controls[1].value = full_user_data.get("notaria_registraduria", "")
-    
-    direccion = create_input_field("Dirección")
-    direccion.controls[1].value = full_user_data.get("direccion", "")
-    
-    ciudad = create_input_field("Ciudad")
-    ciudad.controls[1].value = full_user_data.get("ciudad", "")
-    
-    estado_provincia = create_input_field("Estado/Provincia")
-    estado_provincia.controls[1].value = full_user_data.get("estado_provincia", "")
-    
-    zip = create_input_field("Código Postal")
-    zip.controls[1].value = full_user_data.get("zip", "")
-    
-    pais = create_dropdown_field("País", options=["Colombia", "Ecuador", "Perú", "Otro"])
-    pais.controls[1].value = full_user_data.get("pais", "")
+    name_field = MyInputField(label="Nombres", value=full_user_data.get("first_name", ""))
+    last_name_field = MyInputField(label="Apellidos", value=full_user_data.get("last_name", ""))
+    document_field = MyInputField(label="Número de Identificación", value=full_user_data.get("document", ""))
+    email_field = MyInputField(label="E-mail", value=full_user_data.get("email", ""))
+    phone_field = MyInputField(label="Celular", value=full_user_data.get("phone", ""))
+    register_number_field = MyInputField(label="Número de Registro Civil", value=full_user_data.get("register_number", ""))
+    city_field = MyInputField(label="Ciudad expedición", value=full_user_data.get("city", ""))
+    department_field = MyInputField(label="Departamento", value=full_user_data.get("department", ""))
+    notary_field = MyInputField(label="Notaría, Número o Registraduría", value=full_user_data.get("notaria_registraduria", ""))
+    address_field = MyInputField(label="Dirección", value=full_user_data.get("direccion", ""))
+    city_residence_field = MyInputField(label="Ciudad", value=full_user_data.get("ciudad", ""))
+    state_field = MyInputField(label="Estado/Provincia", value=full_user_data.get("estado_provincia", ""))
+    zip_field = MyInputField(label="Código Postal", value=full_user_data.get("zip", ""))
+    country_field = MyDropdownField(label="País", options=["Colombia", "Ecuador", "Perú", "Otro"])
+
 
     def on_date_change(e):
         selected_date = e.control.value.strftime("%Y-%m-%d")
         birth_date_field.value = selected_date
         page.update()
 
-    birth_date_field = ft.TextField(
-        border_radius=ft.border_radius.all(15),
-        content_padding=ft.padding.symmetric(horizontal=20, vertical=15),
-        bgcolor=ft.Colors.WHITE,
-        border_color="#717171",
-        label_style=ft.TextStyle(color="#717171"),
-        border_width=0.5,
-        value=full_user_data.get("birth_date", ""),
-        expand=True,
+    birth_date_field = DatePickerField(
+        name="Fecha de Nacimiento",
+        on_change=lambda date: print(f"Fecha seleccionada: {date}"),
     )
-
+    birth_date_field.text_field.value = full_user_data.get("birth_date", "")
+    
     def handle_save_click(e):
         updated_data = {
             "first_name": name_field.controls[1].value,
@@ -117,15 +86,15 @@ def ViewProfile(page):
             "email": email_field.controls[1].value,
             "phone_number": phone_field.controls[1].value, 
             "birth_date": birth_date_field.value,
-            "address": direccion.controls[1].value,
-            "city": ciudad.controls[1].value,
-            "state_province": estado_provincia.controls[1].value,
-            "zip_code": zip.controls[1].value,
-            "country": pais.controls[1].value,
+            "address": address_field.controls[1].value,
+            "city": city_residence_field.controls[1].value,
+            "state_province": state_field.controls[1].value,
+            "zip_code": zip_field.controls[1].value,
+            "country": country_field.controls[1].value,
             "civil_register_number": register_number_field.controls[1].value,
             "expedition_city": city_field.controls[1].value,
-            "department": deparment_field.controls[1].value,
-            "notary_registry": notaria_registraduria.controls[1].value,
+            "department": department_field.controls[1].value,
+            "notary_registry": notary_field.controls[1].value,
         }
     
         try:
@@ -177,43 +146,20 @@ def ViewProfile(page):
                                 document_field,
                                 email_field,
                                 phone_field,
-                                ft.Column(
-                                    controls=[
-                                        ft.Text("Fecha de Nacimiento", style=ft.TextStyle(color="#717171")),
-                                        ft.Row(
-                                            controls=[
-                                                birth_date_field,
-                                                ft.IconButton(
-                                                    icon=ft.Icons.CALENDAR_MONTH,
-                                                    icon_color="blue",
-                                                    on_click=lambda e: page.open(
-                                                        ft.DatePicker(
-                                                            first_date=datetime.datetime(year=2023, month=10, day=1),
-                                                            last_date=datetime.datetime(year=2024, month=10, day=1),
-                                                            on_change=on_date_change,
-                                                        )
-                                                    ),
-                                                ),
-                                            ],
-                                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                                        ),
-                                    ],
-                                    spacing=10,
-                                    horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
-                                ),
+                                birth_date_field,
                                 ft.Container(height=5),
                                 ft.Text("Ubicacion", text_align="left", size=20, weight="bold"),
-                                direccion,
-                                ciudad,
-                                estado_provincia,
-                                zip,
-                                pais,
+                                address_field,
+                                city_residence_field,
+                                state_field,
+                                zip_field,
                                 ft.Container(height=5),
                                 ft.Text("Para más DocuFlow", text_align="left", size=20, weight="bold"),
                                 register_number_field,
                                 city_field,
-                                deparment_field,
-                                notaria_registraduria,
+                                department_field,
+                                notary_field,
+                                ft.Container(height=5),
                             ]
                         ),
                         ft.Container(

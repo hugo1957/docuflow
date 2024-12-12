@@ -1,13 +1,11 @@
-
 import flet as ft
-from pages.utils.numero_telefono import PhoneInputDropdown
-from pages.utils.inputs import create_input_field
+from pages.utils.controls.numero_telefono import PhoneInputDropdown
+from pages.utils.controls.inputs import MyInputField
 from pages.utils.navigation import create_footer, create_navbar_home
 
 def ViewRegisterDomiciliario(page):
-    
+    # Manejo de eventos para el registro
     def on_register(e):
-        # Aquí manejas el registro del domiciliario
         print("Registro enviado")
 
     def handle_country_change(selected_country):
@@ -27,7 +25,7 @@ def ViewRegisterDomiciliario(page):
     page.navigation_bar = create_footer(page)
     page.update()
 
-    # Campo de contraseña y repetir contraseña
+    # Campos de contraseña y repetir contraseña
     password_field = ft.Column(
         controls=[
             ft.Text("Contraseña", style=ft.TextStyle(color="#717171")),
@@ -62,7 +60,7 @@ def ViewRegisterDomiciliario(page):
         ]
     )
 
-    # Sección de términos ajustada para evitar desbordamiento
+    # Sección de términos
     terms_section = ft.Column(
         controls=[
             ft.Checkbox(
@@ -70,14 +68,12 @@ def ViewRegisterDomiciliario(page):
                     "Acepto expresamente la autorización de tratamiento de datos personales "
                     "y la Política de Tratamiento de Datos Personales de DocuFlow."
                 ),
-
             ),
             ft.Checkbox(
                 label=(
                     "Acepto expresamente las condiciones de activación de mi cuenta al "
                     "interior de 'DocuFlow Domicilios'."
                 ),
-
             ),
         ],
         spacing=10,
@@ -99,15 +95,14 @@ def ViewRegisterDomiciliario(page):
                 ft.Text(
                     "¡Regístrate y empieza a trabajar!", size=18, weight=ft.FontWeight.BOLD
                 ),
-               
-                create_input_field("Nombre"),
-                create_input_field("Apellidos"),
-                create_input_field("Correo electrónico"),
+                MyInputField("Nombre"),
+                MyInputField("Apellidos"),
+                MyInputField("Correo electrónico"),
                 ft.Column(
                     spacing=0,
                     controls=[
                         ft.Text("Número de teléfono", style=ft.TextStyle(color="#717171")),
-                        phone_input,
+                        phone_input,  # Uso del componente personalizado
                     ]
                 ),
                 password_field,

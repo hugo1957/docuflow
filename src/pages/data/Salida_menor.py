@@ -1,9 +1,9 @@
 import flet as ft
-from pages.utils.inputs import create_input_field
+from pages.utils.controls.inputs import MyInputField
 from pages.utils.navigation import create_footer, create_navbar_product
 from pages.utils.state import departamentos_data
-from pages.utils.dropdownFlag import CountryDropdown
-from pages.utils.Fecha import DatePickerField 
+from pages.utils.controls.dropdownFlag import CountryDropdown
+from pages.utils.controls.Fecha import DatePickerField 
 import datetime
 def ViewRegistroMenores(page):
     page.controls.clear()
@@ -11,12 +11,12 @@ def ViewRegistroMenores(page):
     page.navigation_bar = create_footer(page)
 
     # Campos principales
-    name_field = create_input_field("Nombres y Apellidos del Menor")
-    document_field = create_input_field("Número de Identificación del Menor")
-    birth_certificate_field = create_input_field("Registro Civil de Nacimiento")
-    passport_field = create_input_field("Número de Pasaporte (si aplica)")
-    destination_field = CountryDropdown(on_country_change=None)  # Usar lógica de banderas
-    purpose_field = create_input_field("Propósito del Viaje")
+    name_field = MyInputField("Nombres y Apellidos del Menor")
+    document_field = MyInputField("Número de Identificación del Menor")
+    birth_certificate_field = MyInputField("Registro Civil de Nacimiento")
+    passport_field = MyInputField("Número de Pasaporte (si aplica)")
+    destination_field = CountryDropdown(on_country_change=None)
+    purpose_field = MyInputField("Propósito del Viaje")
 
     today = datetime.datetime.now()
     birth_date_field = DatePickerField(
@@ -37,28 +37,28 @@ def ViewRegistroMenores(page):
     )
 
     # Información del padre
-    father_name_field = create_input_field("Nombre del Padre")
-    father_id_field = create_input_field("Número de Identificación del Padre")
-    father_phone_field = create_input_field("Teléfono del Padre")
+    father_name_field = MyInputField("Nombre del Padre")
+    father_id_field = MyInputField("Número de Identificación del Padre")
+    father_phone_field = MyInputField("Teléfono del Padre")
 
     is_father_deceased = ft.Checkbox(label="¿Padre fallecido?")
     father_death_fields = ft.Column(
         visible=False,
         controls=[
-            create_input_field("Registro Civil de Defunción del Padre"),
+            MyInputField("Registro Civil de Defunción del Padre"),
         ],
     )
 
     # Información de la madre
-    mother_name_field = create_input_field("Nombre de la Madre")
-    mother_id_field = create_input_field("Número de Identificación de la Madre")
-    mother_phone_field = create_input_field("Teléfono de la Madre")
+    mother_name_field = MyInputField("Nombre de la Madre")
+    mother_id_field = MyInputField("Número de Identificación de la Madre")
+    mother_phone_field = MyInputField("Teléfono de la Madre")
 
     is_mother_deceased = ft.Checkbox(label="¿Madre fallecida?")
     mother_death_fields = ft.Column(
         visible=False,
         controls=[
-            create_input_field("Registro Civil de Defunción de la Madre"),
+            MyInputField("Registro Civil de Defunción de la Madre"),
         ],
     )
 

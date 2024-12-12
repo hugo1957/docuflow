@@ -1,8 +1,8 @@
 import uuid
 import flet as ft
 from pages.utils.navigation import create_footer, create_navbar_product
-from pages.utils.inputs import create_input_field, create_dropdown_field
-
+from pages.utils.controls.inputs import MyInputField
+from pages.utils.controls.dropdownFlag import CountryDropdown
 
 def ViewCheckout(page):
     page.controls.clear()
@@ -197,12 +197,11 @@ def ViewCheckout(page):
 
 def create_shipping_info_fields():
     fields = [
-        create_input_field("Nombre Completo"),
-        create_input_field("Dirección"),
-        create_input_field("Ciudad"),
-        create_input_field("Estado/Provincia"),
-        create_input_field("Código Postal"),
-        create_dropdown_field(
-            "País", options=["Colombia", "Ecuador", "Perú", "Otro"]),
+        MyInputField("Nombre Completo"),
+        MyInputField("Dirección"),
+        MyInputField("Ciudad"),
+        MyInputField("Estado/Provincia"),
+        MyInputField("Código Postal"),
+        CountryDropdown(on_country_change=None)
     ]
     return ft.Column(controls=fields, spacing=10, expand=True)

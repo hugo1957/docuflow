@@ -1,18 +1,18 @@
 
 import flet as ft
-from pages.utils.inputs import create_input_field
+from pages.utils.controls.inputs import MyInputField
 from pages.utils.navigation import create_footer, create_navbar_product
 from pages.utils.state import departamentos_data
-from pages.utils.Fecha import DatePickerField
+from pages.utils.controls.Fecha import DatePickerField
 import datetime
 def ViewRegistroCivil(page):
     page.controls.clear()
     page.appbar = create_navbar_product(page)[0]
     page.navigation_bar = create_footer(page)
 
-    name_field = create_input_field("Nombres y apellidos completos del titular del registro")
-    document_field = create_input_field("Número de Identificación del titular")
-    number_serial_field = create_input_field("Número de serial del registro civil, si está disponible")
+    name_field = MyInputField("Nombres y apellidos completos del titular del registro")
+    document_field = MyInputField("Número de Identificación del titular")
+    number_serial_field = MyInputField("Número de serial del registro civil, si está disponible")
 
     departamentos = departamentos_data["departamentos"]
     department_dropdown = ft.Dropdown(
