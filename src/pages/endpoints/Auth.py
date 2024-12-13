@@ -1,6 +1,6 @@
 import requests
 import flet as ft
-API_URL = "http://localhost:8000"
+API_URL = "https://api.creativeferrets.com"
 
 def login_user(page, phone):
     try:
