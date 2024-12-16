@@ -1,15 +1,20 @@
 from pages.utils.controls.numero_telefono import PhoneInputDropdown
 import flet as ft
 from pages.endpoints.Auth import login_user
+import asyncio
 
 def ViewLogin(page):
     page.controls.clear()
     page.appbar = ft.AppBar(
-        leading=ft.IconButton(ft.Icons.ARROW_CIRCLE_LEFT,
-                            autofocus=False,on_click=lambda e: page.go("/"),
-        hover_color=ft.Colors.TRANSPARENT,icon_color="#007354"),
+        leading=ft.IconButton(
+            ft.Icons.ARROW_CIRCLE_LEFT,
+            on_click=lambda e: page.go("/"),
+            hover_color=ft.Colors.TRANSPARENT,
+            icon_color="#007354"
+        ),
         leading_width=60,
-        bgcolor=ft.Colors.WHITE)
+        bgcolor=ft.Colors.WHITE
+    )
     page.navigation_bar = None
     page.update()
 
@@ -32,7 +37,7 @@ def ViewLogin(page):
         content=ft.Text(""),
         actions=[
             ft.TextButton("Cancelar", on_click=lambda e: close_confirm_dialog()),
-            ft.TextButton("Confirmar", on_click=lambda e: confirm_phone_number(e)),
+            ft.TextButton("Confirmar", on_click=lambda e: asyncio.run(confirm_phone_number())),
         ],
     )
 
@@ -40,42 +45,24 @@ def ViewLogin(page):
         confirm_dialog.open = False
         page.update()
 
-    def confirm_phone_number(e):
+    async def confirm_phone_number():
         phone = phone_input.phone_field.value
         country_code = phone_input.dropdown.value
         full_phone = f"{country_code}{phone}"
-
-        if login_user(page, full_phone):
-            close_confirm_dialog()
+        close_confirm_dialog()
+        success = await login_user(page, full_phone)
+        if success:
             page.go("/token")
-        else:
-            close_confirm_dialog()
-            snack_bar = ft.SnackBar(
-                ft.Text("Error al enviar el número de teléfono."),
-                bgcolor=ft.Colors.RED_500,
-            )
-            page.overlay.append(snack_bar)
-            snack_bar.open = True
-            page.update()
 
     def open_confirm_dialog():
         phone = phone_input.phone_field.value
         country_code = phone_input.dropdown.value
         full_phone = f"{country_code}{phone}"
         if not phone or len(phone) < phone_input.phone_field.max_length:
-            snack_bar = ft.SnackBar(
-                ft.Text("Debes ingresar un número de teléfono válido!"),
-                bgcolor=ft.Colors.RED_500,
-            )
-            page.overlay.append(snack_bar)
-            snack_bar.open = True
-            page.update()
             return
         confirm_dialog.content.value = f"¿Es este tu número de teléfono?\n{full_phone}"
-
         if confirm_dialog not in page.overlay:
             page.overlay.append(confirm_dialog)
-
         confirm_dialog.open = True
         page.update()
 
@@ -129,7 +116,7 @@ def ViewLogin(page):
         )
 
     def hidden_buttons():
-        return ft.Container()  # Contenedor vacío
+        return ft.Container()
 
     animated_switcher = ft.AnimatedSwitcher(
         content=hidden_buttons(),
