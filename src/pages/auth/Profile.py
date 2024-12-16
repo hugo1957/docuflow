@@ -4,7 +4,7 @@ from pages.utils.controls.inputs import MyInputField, MyDropdownField
 import flet as ft
 import datetime
 import requests
-API_URL = "https://api.creativeferrets.com"
+API_URL = "http://localhost:8000"
 
 def ViewProfile(page):
     page.controls.clear()

@@ -2,7 +2,7 @@ import flet as ft
 from pages.endpoints.Auth import verify_token, resend_code
 import threading
 import time
-
+import asyncio
 def ViewToken(page):
     page.controls.clear()
     page.appbar = ft.AppBar(
@@ -55,13 +55,11 @@ def ViewToken(page):
     token_fields = create_token_fields()
 
     def handle_text_change(e, index):
-        # Asegurarse de que solo se permitan dígitos
         if not e.control.value.isdigit() and e.control.value:
             e.control.value = ""
             page.update()
             return
 
-        # Navegar hacia adelante si se ingresa un valor
         if e.control.value and index < len(token_fields) - 1:
             token_fields[index + 1].focus()
         # Navegar hacia atrás si el campo está vacío
@@ -70,7 +68,7 @@ def ViewToken(page):
 
         page.update()
 
-    def handle_verify_click(e):
+    async def handle_verify_click(e):
         code = "".join(field.value.strip() for field in token_fields)
 
         if len(code) < 6:
@@ -82,7 +80,9 @@ def ViewToken(page):
             snack_bar.open = True
             return
 
-        if verify_token(page, code):
+        success = await verify_token(page, code)
+
+        if success:
             page.go("/home")
         else:
             snack_bar = ft.SnackBar(
@@ -92,13 +92,15 @@ def ViewToken(page):
             page.overlay.append(snack_bar)
             snack_bar.open = True
 
-    def handle_resend_click(e):
-        if resend_code(page, phone):
+    async def handle_resend_click(e):
+        success = await resend_code(page, phone)
+
+        if success:
             snack_bar = ft.SnackBar(
                 ft.Text("Código reenviado con éxito."),
                 bgcolor=ft.Colors.GREEN_500,
             )
-            start_countdown()
+            await start_countdown()
         else:
             snack_bar = ft.SnackBar(
                 ft.Text("Error al reenviar el código."),
@@ -122,7 +124,7 @@ def ViewToken(page):
                 countdown_label.value = format_time(countdown_seconds)
                 page.update()
             resend_button.visible = True
-            resend_button.on_click = handle_resend_click
+            resend_button.on_click = lambda e: asyncio.run(handle_resend_click(e))
             page.update()
 
         threading.Thread(target=countdown).start()
@@ -162,7 +164,7 @@ def ViewToken(page):
                         ),
                         ft.Container(
                             alignment=ft.alignment.center,
-                            on_click=handle_verify_click,
+                             on_click=lambda e: asyncio.run(handle_verify_click(e)),
                             ink=True,
                             border_radius=ft.border_radius.all(5),
                             width=350,
