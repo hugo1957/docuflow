@@ -147,7 +147,7 @@ def ViewProductDetail(page, url):
     add_to_cart_button = ft.ElevatedButton(
             text="Agregar al carrito",
             on_click=add_to_cart,
-            bgcolor="#e5bc16",
+            bgcolor="#FF5700",
             color="white",
         )
 

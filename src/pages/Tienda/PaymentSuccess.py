@@ -32,14 +32,14 @@ def ViewPaymentSuccess(page):
                         ft.ElevatedButton(
                     text="Volver al inicio",
                     on_click=lambda e: page.go("/"),
-                    bgcolor="#e5bc16",
+                    bgcolor="#FF5700",
                     color="white",
                     width=150,
                 ),
                         ft.ElevatedButton(
                     text="Ver Ordenes de Compra",
                     on_click=lambda e: page.go("/orders"),
-                    bgcolor="#e5bc16",
+                    bgcolor="#FF5700",
                     color="white",
                     width=150,
                 )

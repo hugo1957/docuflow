@@ -15,6 +15,7 @@ from pages.Tienda.OrderDetail import ViewOrderDetail
 from pages.User import ViewUser
 from pages.Domiciliario.RegisterDomi import ViewRegisterDomiciliario
 from pages.auth.Login import ViewLogin
+from pages.auth.Register import ViewRegister
 from pages.auth.Token import ViewToken
 from pages.auth.PageNotFound import PageNotFound
 from pages.auth.Profile import ViewProfile
@@ -41,6 +42,8 @@ class ViewManager:
             view = WelcomeView
         elif route == "/phone-login":
             view = ViewLogin
+        elif route == "/phone-register":
+            view = ViewRegister
         elif route == "/token":
             view = ViewToken
         elif route == "/home":
@@ -106,7 +109,6 @@ def configure_page(page: ft.Page):
     page.on_app_lifecycle_state_change = handle_app_event
 
 
-
 def handle_navigation(page, view_manager, route):
     params = {}
     if re.match(r"^/product-detail/.+", route):
@@ -141,7 +143,6 @@ async def main(page: ft.Page):
     page.on_view_pop = on_view_pop
 
     handle_navigation(page, view_manager, page.route)
-    
 
 
 

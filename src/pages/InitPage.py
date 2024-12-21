@@ -48,7 +48,7 @@ def WelcomeView(page):
         buttons.append(
             ft.Container(
                 alignment=ft.alignment.center,
-                on_click=lambda e: page.go("/phone-login"),
+                on_click=lambda e: page.go("/phone-register"),
                 border_radius=ft.border_radius.all(15),
                 height=50,
                 bgcolor=ft.Colors.GREEN,
@@ -178,7 +178,7 @@ def WelcomeView(page):
             ft.TextButton(
                 "Soy usuario registrado",
                 style=ft.ButtonStyle(color=ft.Colors.GREEN),
-                on_click=lambda e: page.go("/login"),
+                on_click=lambda e: page.go("/phone-login"),
             )
         )
 

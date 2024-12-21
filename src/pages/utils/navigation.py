@@ -37,6 +37,7 @@ def create_navbar_home(page):
         color="white",
         size=12,
         weight=ft.FontWeight.BOLD,
+        text_align="center"
     )
 
     cart_icon = ft.Container(
@@ -53,16 +54,15 @@ def create_navbar_home(page):
                     content=cart_count,
                     bgcolor="red",
                     border_radius=ft.border_radius.all(12),
-                    padding=ft.padding.all(0),
                     alignment=ft.alignment.center,
-                    width=24,
-                    height=24,
+                    width=20,
+                    height=20,
                     offset=ft.Offset(0.8, -0.6),
                 ),
             ]
         ),
         alignment=ft.alignment.center,
-        padding=ft.padding.only(right=20),
+        padding=ft.padding.all(15),
         on_click=lambda e: page.go("/cart"),
     )
 
@@ -90,6 +90,7 @@ def create_navbar_product(page):
         color="white",
         size=12,
         weight=ft.FontWeight.BOLD,
+        text_align="center"
     )
 
     cart_icon = ft.Container(
@@ -106,10 +107,9 @@ def create_navbar_product(page):
                     content=cart_count,
                     bgcolor="red",
                     border_radius=ft.border_radius.all(12),
-                    padding=ft.padding.all(0),
                     alignment=ft.alignment.center,
-                    width=24,
-                    height=24,
+                    width=20,
+                    height=20,
                     offset=ft.Offset(0.8, -0.6),
                 ),
             ]

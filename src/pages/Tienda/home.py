@@ -4,6 +4,8 @@ from pages.utils.navigation import create_navbar_home
 from pages.utils.image import create_image_with_loader
 from pages.utils.carusel import create_carousel
 from pages.endpoints.Auth import refresh_token, load_user, logout_user
+import asyncio
+
 def ViewHome(page):
     page.controls.clear()
     navbar = create_navbar_home(page)[0]
@@ -17,7 +19,7 @@ def ViewHome(page):
             refresh_token(page)
             access_token = page.client_storage.get("creativeferrets.tienda.access_token")
         if access_token:
-            load_user(page)
+            asyncio.run(load_user(page))
         else:
             page.go("/phone-login")
             return
@@ -25,7 +27,7 @@ def ViewHome(page):
         print(f"Error en la autenticación: {e}")
         page.go("/phone-login")
         return
-    
+
     def create_tab_content(index):
         categories = [
             "Registro Civil",
@@ -50,7 +52,7 @@ def ViewHome(page):
             text = column.controls[0]
 
             if i == selected_index:
-                container.bgcolor = "#e5bc16"
+                container.bgcolor = "#FF5700"
                 text.color = ft.Colors.WHITE
             else:
                 container.bgcolor = None
@@ -65,7 +67,7 @@ def ViewHome(page):
     tabs = ft.Tabs(
         selected_index=0,
         on_change=update_tab_content,
-        indicator_color="#e5bc16",
+        indicator_color="#FF5700",
         indicator_border_radius=ft.border_radius.all(10),
         scrollable=True,
         indicator_tab_size=False,
@@ -142,31 +144,33 @@ def ViewHome(page):
                 )
             ),
             ft.Tab(
-              tab_content=ft.Container(
-                content=ft.Column(
-                    controls=[
-                        ft.Text("Enrolamiento", size=15, color=ft.Colors.BLACK),
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER,
-                ),
-                alignment=ft.alignment.center,
-                padding=ft.padding.symmetric(horizontal=10, vertical=5),
-                border_radius=ft.border_radius.all(10),
-              )  
-            ),
-            ft.Tab(
                 tab_content=ft.Container(
                     content=ft.Column(
                         controls=[
-                            ft.Text("Permiso Viajes de Menores", size=15, color=ft.Colors.BLACK),
+                            ft.Text("Enrolamiento", size=15,
+                                    color=ft.Colors.BLACK),
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
                     ),
                     alignment=ft.alignment.center,
                     padding=ft.padding.symmetric(horizontal=10, vertical=5),
                     border_radius=ft.border_radius.all(10),
-                )  
-                ),
+                )
+            ),
+            ft.Tab(
+                tab_content=ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            ft.Text("Permiso Viajes de Menores",
+                                    size=15, color=ft.Colors.BLACK),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    alignment=ft.alignment.center,
+                    padding=ft.padding.symmetric(horizontal=10, vertical=5),
+                    border_radius=ft.border_radius.all(10),
+                )
+            ),
 
         ],
     )
@@ -226,10 +230,17 @@ def ViewHome(page):
                     bgcolor="#007354",
                     padding=ft.padding.all(10),
                     content=ft.TextField(
+                        border_radius=ft.border_radius.all(10),
+                        content_padding=ft.padding.symmetric(
+                            horizontal=20, vertical=15),
                         bgcolor=ft.Colors.WHITE,
-                        color=ft.Colors.BLACK,
-                        label="Buscar en docuflowapp.com",
+                        border_color="#717171",
+                        label_style=ft.TextStyle(color="#717171"),
+                        border_width=0.5,
+                        expand=True,
                         prefix_icon=ft.Icons.SEARCH,
+                        hint_text="Buscar en docuflowapp.com",
+
                     ),
                 ),
                 ft.Column(
@@ -266,7 +277,7 @@ def ViewHome(page):
                             expand=True,
                             alignment=ft.alignment.center,
                             content=create_carousel(page),
-                            padding=ft.padding.all(15),
+                            padding=ft.padding.all(10),
                         ),
                         tabs,
                         dynamic_content,
@@ -278,56 +289,65 @@ def ViewHome(page):
     )
     return container
 
+
 def create_content(page, image, name, valor, url):
     return ft.Container(
         width=200,
-        height=300,
+        height=350,
         expand=True,
         padding=ft.padding.all(10),
         border_radius=ft.border_radius.all(15),
         bgcolor=ft.Colors.GREY_100,
+        alignment=ft.alignment.center,
         content=ft.Column(
             controls=[
-                ft.Row(
-                    controls=[
+                ft.Column(
+                    controls=[ft.Row(
+                        controls=[
+                            ft.Container(
+                                width=10,
+                                height=10,
+                            ),
+                            ft.IconButton(
+                                icon=ft.Icons.SHOPPING_CART_OUTLINED,
+                                icon_color=ft.Colors.WHITE,
+                                bgcolor="#FF5700",
+                                on_click=lambda e: page.go(
+                                    f"/product-detail/{url}"),
+                            ),
+
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    ),
                         ft.Container(
-                            width=10,
-                            height=10,
+                        alignment=ft.alignment.center,
+                        width=150,  # Ajusta el ancho para simular la lámpara
+                        height=200,  # Altura de la forma de la lámpara
+                        border_radius=ft.BorderRadius(
+                            top_left=75,  # Más redondeado en la parte superior
+                            top_right=75,
+                            bottom_left=40,  # Menos redondeado en la parte inferior
+                            bottom_right=40,
                         ),
-                        ft.IconButton(
-                            icon=ft.Icons.SHOPPING_CART_OUTLINED,
-                            icon_color=ft.Colors.WHITE,
-                            bgcolor="#e5bc16",
-                            on_click=lambda e: page.go(
-                                f"/product-detail/{url}"),
+                        bgcolor="#f0f0f0",  # Color del contenedor de la imagen
+                        shadow=ft.BoxShadow(
+                            blur_radius=15,
+                            spread_radius=5,
+                            color="rgba(0,0,0,0.2)",
                         ),
-                        
+                        content=create_image_with_loader(
+                            src=image,
+                            width=150,
+                            height=200,
+                            fit=ft.ImageFit.FILL,
+                        ),
+                    ),
                     ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=0,
                 ),
-                ft.Container(
-                    alignment=ft.alignment.center,
-                    width=150,  # Ajusta el ancho para simular la lámpara
-                    height=200,  # Altura de la forma de la lámpara
-                    border_radius=ft.BorderRadius(
-                        top_left=75,  # Más redondeado en la parte superior
-                        top_right=75,
-                        bottom_left=40,  # Menos redondeado en la parte inferior
-                        bottom_right=40,
-                    ),
-                    bgcolor="#f0f0f0",  # Color del contenedor de la imagen
-                    shadow=ft.BoxShadow(
-                        blur_radius=15,
-                        spread_radius=5,
-                        color="rgba(0,0,0,0.2)",
-                    ),
-                    content=create_image_with_loader(
-                        src=image,
-                        width=150,
-                        height=200,
-                        fit=ft.ImageFit.COVER,
-                    ),
-                ),
+
                 ft.Text(
                     name,
                     weight=ft.FontWeight.BOLD,
@@ -340,6 +360,7 @@ def create_content(page, image, name, valor, url):
                         weight=ft.FontWeight.BOLD),
             ],
             spacing=0,
+
         ),
     )
 
@@ -655,4 +676,5 @@ def declaraciones_juramentadas_content(page):
             spacing=10,
         ),
     )
+
 

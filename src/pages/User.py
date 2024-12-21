@@ -1,4 +1,3 @@
-
 from pages.utils.navigation import create_navbar_product, create_footer
 from functools import partial
 import flet as ft
@@ -15,8 +14,8 @@ def ViewUser(page):
     padding=ft.padding.symmetric(vertical=30, horizontal=20),
     content=ft.Column(
       [
-        ft.Text("Hola,", size=18, color=ft.colors.BLUE_GREY_500),
-        ft.Text("Hugo Puche", size=26, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_700),
+        ft.Text("Hola,", size=18, color=ft.Colors.BLUE_GREY_500),
+        ft.Text("Hugo Puche", size=26, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_700),
       ],
       alignment=ft.MainAxisAlignment.START,
       horizontal_alignment=ft.CrossAxisAlignment.START,
@@ -33,7 +32,7 @@ def ViewUser(page):
       title=ft.Text("¿Deseas cerrar sesión?"),
       actions=[
         ft.TextButton("Cancelar", on_click=lambda _: close_dialog(dlg)),
-        ft.TextButton("Cerrar sesión", on_click=lambda _: confirm_logout(dlg), style=ft.ButtonStyle(color=ft.colors.RED_500)),
+        ft.TextButton("Cerrar sesión", on_click=lambda _: confirm_logout(dlg), style=ft.ButtonStyle(color=ft.Colors.RED_500)),
       ],
     )
     page.dialog = dlg
@@ -69,7 +68,7 @@ def ViewUser(page):
             content=ft.Column(
               [
                 ft.Icon(action["icon"], size=28, color="#FF5700"),
-                ft.Text(action["label"], size=10, text_align=ft.TextAlign.CENTER, color=ft.colors.BLUE_GREY_700),
+                ft.Text(action["label"], size=10, text_align=ft.TextAlign.CENTER, color=ft.Colors.BLUE_GREY_700),
               ],
               spacing=5,
               alignment=ft.MainAxisAlignment.CENTER,
@@ -135,9 +134,9 @@ def ViewUser(page):
     alignment=ft.alignment.center,
     content=ft.TextButton(
       "Cerrar sesión",
-      icon=ft.icons.LOGOUT,
+      icon=ft.Icons.LOGOUT,
       on_click=show_logout_dialog,
-      style=ft.ButtonStyle(color=ft.colors.RED_500),
+      style=ft.ButtonStyle(color=ft.Colors.RED_500),
     ),
   )
 
@@ -150,12 +149,12 @@ def ViewUser(page):
       
       controls=[
         greeting_section,
-        ft.Text("Acciones Rápidas", size=14, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_GREY_500),
+        ft.Text("Acciones Rápidas", size=14, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_GREY_500),
         quick_actions_section,
         ft.Divider(),
-        ft.Text("Configuración de Cuenta", size=14, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_GREY_500),
+        ft.Text("Configuración de Cuenta", size=14, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_GREY_500),
         account_section,
-        ft.Text("Más Opciones", size=14, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_GREY_500),
+        ft.Text("Más Opciones", size=14, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_GREY_500),
         menu_section,
         logout_section,
       ],

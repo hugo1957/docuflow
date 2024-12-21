@@ -36,9 +36,10 @@ def PageNotFound(page):
     # Botón para ir a la tienda
     go_to_store_button = ft.ElevatedButton(
         text="Ir a la tienda",
-        on_click=lambda e: page.go("/"),
-        bgcolor="#e5bc16",
+        on_click=lambda e: page.go("/home"),
+        bgcolor="#FF5700",
         color="white",
+        width=150,
     )
 
     # Composición de la página

@@ -2,8 +2,7 @@ import flet as ft
 import asyncio
 from pages.utils.controls.numero_telefono import PhoneInputDropdown
 from pages.endpoints.Auth import login_user
-
-def ViewLogin(page):
+def ViewRegister(page):
     page.controls.clear()
     page.appbar = ft.AppBar(
         leading=ft.IconButton(
@@ -60,7 +59,7 @@ def ViewLogin(page):
         full_phone = f"{country_code}{phone}"
         if not phone or len(phone) < phone_input.phone_field.max_length:
             return
-        confirm_dialog.content.value = f"¿Es este tu número de teléfono?\n{full_phone}"
+        confirm_dialog.content.value = f"¿Es este tu número de teléfono para registrarte?\n{full_phone}"
         if confirm_dialog not in page.overlay:
             page.overlay.append(confirm_dialog)
         confirm_dialog.open = True
@@ -134,7 +133,7 @@ def ViewLogin(page):
             alignment=ft.MainAxisAlignment.START,
             controls=[
                 ft.Text("Ingresa tu número de teléfono", color=ft.Colors.BLACK, size=20, weight=ft.FontWeight.BOLD),
-                ft.Text("Te enviaremos un código de verificación para iniciar sesion", style=ft.TextStyle(color="#717171")),
+                ft.Text("Te enviaremos un código para crear tu cuenta", style=ft.TextStyle(color="#717171")),
                 ft.Container(height=5),
                 phone_input,
                 ft.Container(height=20),
@@ -143,5 +142,3 @@ def ViewLogin(page):
         ),
     )
     return container
-
-
