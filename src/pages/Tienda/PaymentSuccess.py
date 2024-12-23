@@ -12,7 +12,7 @@ def ViewPaymentSuccess(page):
         content=ft.Column(
             controls=[
                 ft.Image(
-                    src="icon.png",
+                    src="logo.png",
                     width=150,
                     height=150,
                 ),
@@ -30,8 +30,8 @@ def ViewPaymentSuccess(page):
                 ft.ResponsiveRow(
                     controls=[
                         ft.ElevatedButton(
-                    text="Volver al inicio",
-                    on_click=lambda e: page.go("/"),
+                    text="Volver a la tienda",
+                    on_click=lambda e: page.go("/home"),
                     bgcolor="#FF5700",
                     color="white",
                     width=150,

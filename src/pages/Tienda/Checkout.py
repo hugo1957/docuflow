@@ -53,7 +53,7 @@ def ViewCheckout(page):
                 ft.Image(src="logo.png", width=100, height=100),
                 ft.Text("Tu carrito está vacío", size=24, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
                 ft.Text("¡Visita nuestra tienda y agrega productos a tu carrito!", size=16, text_align=ft.TextAlign.CENTER),
-                ft.ElevatedButton(text="Ir a la tienda", on_click=lambda e: page.go("/home"), bgcolor="#FF5700", color="white", width=150),
+                ft.ElevatedButton(text="Ir a la tienda", on_click=lambda _: page.go("/home"), bgcolor="#FF5700", color="white", width=150),
               ],
               alignment=ft.MainAxisAlignment.CENTER,
               horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -85,7 +85,8 @@ def ViewCheckout(page):
                     ),
                     ft.Column(
                       expand=True,
-                      alignment=ft.MainAxisAlignment.START,
+                      alignment=ft.MainAxisAlignment.CENTER,
+                      horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                       controls=[
                         ft.Text(item["name"], size=16, weight=ft.FontWeight.BOLD, max_lines=2, overflow=ft.TextOverflow.ELLIPSIS, text_align=ft.TextAlign.CENTER),
                         ft.Text(f"Precio unitario: {item['price']}", size=14, text_align=ft.TextAlign.CENTER),
@@ -112,11 +113,11 @@ def ViewCheckout(page):
 
       def validate_shipping_info(fields):
         for field in fields.controls:
-          if not field.value.strip():
-            return f"El campo {field.label} es obligatorio."
+          if not field.controls[1].value.strip():
+            return f"El campo {field.controls[0].value} es obligatorio."
         return None
 
-      def apply_coupon(e, coupon_code):
+      def apply_coupon(_, coupon_code):
         if coupon_code.strip() == "DESCUENTO10":
           page.snack_bar = ft.SnackBar(content=ft.Text("¡Cupón aplicado! 10% de descuento."), bgcolor=ft.colors.GREEN)
           page.snack_bar.open = True
@@ -130,7 +131,7 @@ def ViewCheckout(page):
           page.snack_bar.open = True
         page.update()
 
-      def process_payment(e):
+      def process_payment(_):
         error = validate_shipping_info(shipping_info_fields)
         if error:
           page.snack_bar = ft.SnackBar(content=ft.Text(error), bgcolor=ft.colors.RED)
@@ -150,7 +151,7 @@ def ViewCheckout(page):
 
       def create_order(page):
         cart = page.session.get("cart") or []
-        shipping_info = {field.label: field.value for field in shipping_info_fields.controls}
+        shipping_info = {field.controls[0].value: field.controls[1].value for field in shipping_info_fields.controls}
         order_id = str(uuid.uuid4())
         order = {
           "id": order_id,

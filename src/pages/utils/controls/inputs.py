@@ -4,6 +4,7 @@ class MyInputField(ft.Column):
     def __init__(self, label, value=""):
         super().__init__()
         self.spacing = 5
+        self.label = label
         self.controls = [
             ft.Text(label, style=ft.TextStyle(color="#717171")),
             ft.TextField(

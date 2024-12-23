@@ -116,6 +116,56 @@ async def load_user(page):
     return None
 
 
+async def fetch_user_data(page, user_id):
+  access_token = page.client_storage.get("creativeferrets.tienda.access_token")
+  if access_token:
+    try:
+      async with aiohttp.ClientSession() as session:
+        async with session.get(
+          f"{API_URL}/api/user/user/{user_id}/",
+          headers={
+            "Authorization": f"JWT {access_token}",
+            "Accept": "application/json"
+          }
+        ) as response:
+          if response.status == 200:
+            return await response.json()
+    except aiohttp.ClientError as e:
+      print(f"Error al cargar los datos del usuario: {e}")
+      return None
+  return None
+
+
+async def update_user_data(page, user_id, updated_data):
+  access_token = page.client_storage.get("creativeferrets.tienda.access_token")
+  if access_token:
+    try:
+      async with aiohttp.ClientSession() as session:
+        async with session.put(
+          f"{API_URL}/api/user/user/edit/{user_id}/",
+          json=updated_data,
+          headers={
+            "Authorization": f"JWT {access_token}",
+            "Content-Type": "application/json",
+          },
+        ) as response:
+          if response.status == 200:
+            snack_bar = ft.SnackBar(
+              ft.Text("Datos actualizados correctamente."), bgcolor=ft.Colors.GREEN
+            )
+            page.overlay.append(snack_bar)
+            snack_bar.open = True
+            page.update()
+            return await response.json()
+    except aiohttp.ClientError as e:
+      snack_bar = ft.SnackBar(ft.Text("Error al actualizar los datos."), bgcolor=ft.Colors.RED)
+      page.overlay.append(snack_bar)
+      snack_bar.open = True
+      page.update()
+      print(f"Error al actualizar los datos del usuario: {e}")
+      return None
+  return None
+
 def logout_user(page):
     page.client_storage.remove("creativeferrets.tienda.access_token")
     page.client_storage.remove("creativeferrets.tienda.refresh_token")

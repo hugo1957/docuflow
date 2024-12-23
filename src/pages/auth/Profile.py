@@ -2,8 +2,9 @@ from pages.utils.navigation import create_footer, create_navbar_product
 from pages.utils.controls.Fecha import DatePickerField
 from pages.utils.controls.inputs import MyInputField, MyDropdownField
 import flet as ft
-import datetime
+import asyncio
 import requests
+from pages.endpoints.Auth import fetch_user_data,update_user_data
 API_URL = "http://localhost:8000"
 
 def ViewProfile(page):
@@ -27,23 +28,7 @@ def ViewProfile(page):
 
     user_id = user_data["id"]
 
-    def fetch_user_data():
-        try:
-            access_token = page.client_storage.get("creativeferrets.tienda.access_token")
-            response = requests.get(
-                f"{API_URL}/api/user/user/{user_id}/",
-                headers={
-                    "Authorization": f"JWT {access_token}",
-                    "Accept": "application/json"
-                }
-            )
-            response.raise_for_status()
-            return response.json()
-        except requests.RequestException as e:
-            print(f"Error al cargar los datos del usuario: {e}")
-            return None
-
-    full_user_data = fetch_user_data()
+    full_user_data = asyncio.run(fetch_user_data(page,user_id))
     if not full_user_data:
         snack_bar = ft.SnackBar(ft.Text("No se encontraron datos del usuario."), bgcolor=ft.Colors.RED)
         page.overlay.append(snack_bar)
@@ -97,26 +82,8 @@ def ViewProfile(page):
             "notary_registry": notary_field.controls[1].value,
         }
     
-        try:
-            access_token = page.client_storage.get("creativeferrets.tienda.access_token")
-            response = requests.put(
-                f"{API_URL}/api/user/user/edit/{user_id}/",
-                json=updated_data,
-                headers={
-                    "Authorization": f"JWT {access_token}",
-                    "Content-Type": "application/json",
-                },
-            )
-            response.raise_for_status()
-            snack_bar = ft.SnackBar(ft.Text("Datos actualizados correctamente."), bgcolor=ft.Colors.GREEN)
-            page.overlay.append(snack_bar)
-            snack_bar.open = True
-            page.update()
-        except requests.RequestException as ex:
-            snack_bar = ft.SnackBar(ft.Text("Error al actualizar los datos."), bgcolor=ft.Colors.RED)
-            page.overlay.append(snack_bar)
-            snack_bar.open = True
-            page.update()
+        updated_user_data = asyncio.run(update_user_data(page, user_id, updated_data))
+
 
     container = ft.Column(
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,

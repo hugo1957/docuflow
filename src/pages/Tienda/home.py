@@ -19,7 +19,9 @@ def ViewHome(page):
             refresh_token(page)
             access_token = page.client_storage.get("creativeferrets.tienda.access_token")
         if access_token:
-            asyncio.run(load_user(page))
+            user = page.client_storage.get("creativeferrets.tienda.user")
+            if not user:
+              asyncio.run(load_user(page))
         else:
             page.go("/phone-login")
             return
@@ -220,6 +222,7 @@ def ViewHome(page):
             )
         ]
     )
+    
     container = ft.Container(
         padding=ft.padding.all(0),
         alignment=ft.alignment.center,

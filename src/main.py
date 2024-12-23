@@ -1,6 +1,7 @@
 import flet as ft
 import re
 import os
+import asyncio
 from pages.Tienda.home import ViewHome
 # Tienda
 from pages.Tienda.ProductDetail import ViewProductDetail
@@ -11,7 +12,6 @@ from pages.Tienda.Favorites import ViewFavorites
 from pages.Tienda.Order import ViewOrders
 from pages.Tienda.OrderDetail import ViewOrderDetail
 
-
 from pages.User import ViewUser
 from pages.Domiciliario.RegisterDomi import ViewRegisterDomiciliario
 from pages.auth.Login import ViewLogin
@@ -20,10 +20,12 @@ from pages.auth.Token import ViewToken
 from pages.auth.PageNotFound import PageNotFound
 from pages.auth.Profile import ViewProfile
 from pages.InitPage import WelcomeView
+
 # Extras
 from pages.Extras.Terminos_condiciones import ViewTermsAndConditions
 from pages.Extras.Politicas_privacidad import ViewPrivacyPolicy
 from pages.Extras.Autorizacion_tratamiento_datos import ViewDataAuthorization
+
 # Data
 from pages.data.Registro_civil import ViewRegistroCivil
 from pages.data.Salida_menor import ViewRegistroMenores
@@ -147,5 +149,6 @@ async def main(page: ft.Page):
 
 
 
+
 if __name__ == "__main__":
-    ft.app(target=main, assets_dir="assets")
+    asyncio.run(ft.app_async(target=main, assets_dir="assets"))
