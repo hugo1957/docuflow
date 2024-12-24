@@ -29,6 +29,47 @@ def ViewHome(page):
         print(f"Error en la autenticación: {e}")
         page.go("/phone-login")
         return
+    def check_item_clicked(e):
+        e.control.checked = not e.control.checked
+        e.control.update()
+
+    pb = ft.PopupMenuButton(
+      icon=ft.Icons.FILTER_LIST_ALT,
+      icon_color=ft.Colors.WHITE,
+      elevation=0,
+      menu_position=ft.PopupMenuPosition.OVER,
+      shadow_color=ft.Colors.BLACK,
+      tooltip="Filtros",
+      items=[
+        ft.PopupMenuItem(
+          content=ft.Row(
+            controls=[
+              ft.Text("Ascendente", size=15),
+              ft.Icon(ft.Icons.ARROW_UPWARD, size=20, color="#FF5700"),
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+          ),
+        ),
+        ft.PopupMenuItem(
+          content=ft.Row(
+            controls=[
+              ft.Text("Descendente", size=15),
+              ft.Icon(ft.Icons.ARROW_DOWNWARD, size=20, color="#FF5700"),
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+          ),
+        ),
+        ft.PopupMenuItem(
+          content=ft.Row(
+            controls=[
+              ft.Text("Más Ventas", size=15),
+              ft.Icon(ft.Icons.SELL, size=20, color="#FF5700"),
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+          ),
+        ),
+      ]
+    )
 
     def create_tab_content(index):
         categories = [
@@ -222,7 +263,7 @@ def ViewHome(page):
             )
         ]
     )
-    
+
     container = ft.Container(
         padding=ft.padding.all(0),
         alignment=ft.alignment.center,
@@ -232,19 +273,23 @@ def ViewHome(page):
                 ft.Container(
                     bgcolor="#007354",
                     padding=ft.padding.all(10),
-                    content=ft.TextField(
-                        border_radius=ft.border_radius.all(10),
-                        content_padding=ft.padding.symmetric(
-                            horizontal=20, vertical=15),
-                        bgcolor=ft.Colors.WHITE,
-                        border_color="#717171",
-                        label_style=ft.TextStyle(color="#717171"),
-                        border_width=0.5,
-                        expand=True,
-                        prefix_icon=ft.Icons.SEARCH,
-                        hint_text="Buscar en docuflowapp.com",
+                    content=ft.Row(
+                        controls=[
+                            ft.TextField(
+                                border_radius=ft.border_radius.all(10),
+                                content_padding=ft.padding.symmetric(
+                                    horizontal=20, vertical=15),
+                                bgcolor=ft.Colors.WHITE,
+                                border_color="#717171",
+                                label_style=ft.TextStyle(color="#717171"),
+                                border_width=0.5,
+                                expand=True,
+                                prefix_icon=ft.Icons.SEARCH,
+                                hint_text="Buscar en docuflowapp.com",
 
-                    ),
+                            ), pb
+                        ]
+                    )
                 ),
                 ft.Column(
                     scroll=ft.ScrollMode.HIDDEN,
