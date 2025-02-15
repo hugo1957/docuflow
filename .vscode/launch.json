@@ -1,0 +1,54 @@
+{
+  // Use IntelliSense para saber los atributos posibles.
+  // Mantenga el puntero para ver las descripciones de los existentes atributos.
+  // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "src",
+      "cwd": "src",
+      "request": "launch",
+      "type": "dart"
+    },
+    {
+      "name": "flutter",
+      "cwd": "build\\flutter",
+      "request": "launch",
+      "type": "dart"
+    },
+    {
+      "name": "flutter (profile mode)",
+      "cwd": "build\\flutter",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "flutter (release mode)",
+      "cwd": "build\\flutter",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release"
+    },
+    {
+      "name": "google_login",
+      "cwd": "src\\components\\google_login",
+      "request": "launch",
+      "type": "dart"
+    },
+    {
+      "name": "google_login (profile mode)",
+      "cwd": "src\\components\\google_login",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "google_login (release mode)",
+      "cwd": "src\\components\\google_login",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release"
+    }
+  ]
+}

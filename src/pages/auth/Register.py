@@ -2,6 +2,8 @@ import flet as ft
 import asyncio
 from pages.utils.controls.numero_telefono import PhoneInputDropdown
 from pages.endpoints.Auth import login_user
+import flet_lottie as fl
+
 def ViewRegister(page):
     page.controls.clear()
     page.appbar = ft.AppBar(
@@ -95,7 +97,7 @@ def ViewRegister(page):
                     border=ft.border.all(0.5, ft.Colors.GREEN),
                     content=ft.Row(
                         controls=[
-                            ft.Lottie(
+                            fl.Lottie(
                                 src="https://creativeferrets.com/assets/lottie/whastapp.json",
                                 animate=True,
                                 width=30,

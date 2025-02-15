@@ -1,19 +1,23 @@
 import flet as ft
 
 class CountryDropdown(ft.Dropdown):
-    def __init__(self, on_country_change=None, height=70, bgcolor=ft.Colors.WHITE):
-        super().__init__()
-        self.on_country_change = on_country_change  # Callback para manejar el cambio de país
-        self.height = height
-        self.bgcolor = bgcolor
-        self.border_radius = ft.border_radius.all(15)
-        self.padding = ft.padding.all(5)
-        self.border_width = 0.5
+    def __init__(self, on_country_change=None):
+        # Usamos los mismos parámetros que "department_dropdown"/"city_dropdown".
+        super().__init__(
+            border_radius=ft.border_radius.all(15),
+            content_padding=ft.padding.symmetric(horizontal=20, vertical=15),
+            bgcolor=ft.Colors.WHITE,
+            border_color="#717171",
+            label_style=ft.TextStyle(color="#717171"),
+            border_width=0.5,
+            options=[],                
+            on_change=self.handle_country_change,
+        )
+        self.on_country_change = on_country_change
+
+        # Cargamos las opciones de país
         self.options = self._get_country_options()
-        self.on_change = self.handle_country_change
-        self.filled = False
-        self.elevation = 0
-        
+
     def _get_country_options(self):
         """Crea las opciones del dropdown con banderas y nombres de países."""
         country_data = {
@@ -216,20 +220,19 @@ class CountryDropdown(ft.Dropdown):
 
         return [
             ft.dropdown.Option(
-                key=key,
+                key=country_name,
                 content=ft.Row(
                     controls=[
-                        ft.Image(src=value["flag"], width=20, height=20),
-                        ft.Text(key, size=14, color=ft.Colors.BLACK),
+                        ft.Image(src=country_info["flag"], width=20, height=20),
+                        ft.Text(country_name, size=14, color=ft.Colors.BLACK),
                     ],
                     alignment=ft.MainAxisAlignment.START,
                 ),
             )
-            for key, value in country_data.items()
+            for country_name, country_info in country_data.items()
         ]
 
     def handle_country_change(self, e):
         """Callback para manejar el cambio de país."""
         if self.on_country_change:
             self.on_country_change(e.control.value)
-

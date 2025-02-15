@@ -3,12 +3,14 @@ from pages.endpoints.Auth import verify_token, resend_code
 import threading
 import time
 import asyncio
+
+
 def ViewToken(page):
     page.controls.clear()
     page.appbar = ft.AppBar(
         leading=ft.IconButton(ft.Icons.ARROW_CIRCLE_LEFT,
-                            autofocus=False,on_click=lambda e: page.go("/phone-login"),
-        hover_color=ft.Colors.TRANSPARENT,icon_color="#007354"),
+                              autofocus=False, on_click=lambda e: page.go("/phone-login"),
+                              hover_color=ft.Colors.TRANSPARENT, icon_color="#007354"),
         leading_width=60,
         bgcolor=ft.Colors.WHITE)
     page.navigation_bar = None
@@ -62,9 +64,6 @@ def ViewToken(page):
 
         if e.control.value and index < len(token_fields) - 1:
             token_fields[index + 1].focus()
-        # Navegar hacia atrás si el campo está vacío
-        elif not e.control.value and index > 0:
-            token_fields[index - 1].focus()
 
         page.update()
 
@@ -124,7 +123,8 @@ def ViewToken(page):
                 countdown_label.value = format_time(countdown_seconds)
                 page.update()
             resend_button.visible = True
-            resend_button.on_click = lambda e: asyncio.run(handle_resend_click(e))
+            resend_button.on_click = lambda e: asyncio.run(
+                handle_resend_click(e))
             page.update()
 
         threading.Thread(target=countdown).start()
@@ -150,7 +150,8 @@ def ViewToken(page):
                     scroll=ft.ScrollMode.HIDDEN,
                     controls=[
                         ft.Container(height=5),
-                        ft.Text("Verificación de Código 👀", size=20, color=ft.Colors.BLACK, weight=ft.FontWeight.W_100),
+                        ft.Text("Verificación de Código 👀", size=20,
+                                color=ft.Colors.BLACK, weight=ft.FontWeight.W_100),
                         ft.Text(
                             f"A TU NÚMERO CELULAR {phone}",
                             size=15,
@@ -164,18 +165,21 @@ def ViewToken(page):
                         ),
                         ft.Container(
                             alignment=ft.alignment.center,
-                             on_click=lambda e: asyncio.run(handle_verify_click(e)),
+                            on_click=lambda e: asyncio.run(
+                                handle_verify_click(e)),
                             ink=True,
                             border_radius=ft.border_radius.all(5),
                             width=350,
                             height=50,
                             bgcolor=ft.Colors.GREEN,
-                            content=ft.Text("Verificar Código", size=15, color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD),
+                            content=ft.Text("Verificar Código", size=15,
+                                            color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD),
                             padding=ft.padding.all(10),
                         ),
                         ft.Container(
                             alignment=ft.alignment.center,
-                            content=ft.Text("¿No recibiste el código?", size=12, color=ft.Colors.BLACK),
+                            content=ft.Text("¿No recibiste el código?",
+                                            size=12, color=ft.Colors.BLACK),
                         ),
                         countdown_label,
                         resend_button,

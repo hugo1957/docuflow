@@ -1,0 +1,6 @@
+name: Docuflow
+environment:
+  sdk: '^3.5.0'
+dependencies:
+  flet_google_signin:
+    path: /Users/themu/Proyectos/docuflow/src/flutter/flet_google_signin

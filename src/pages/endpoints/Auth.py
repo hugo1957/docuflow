@@ -72,28 +72,35 @@ async def resend_code(page, phone):
         return False
 
 
-def refresh_token(page):
-    refresh_token = page.client_storage.get(
+async def refresh_token(page):
+    refresh_token = await page.client_storage.get_async(
         "creativeferrets.tienda.refresh_token")
     if refresh_token:
-        response = requests.post(
-            f"{API_URL}/auth/jwt/refresh/",
-            json={"refresh": refresh_token},
-            headers={
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            }
-        )
-        response.raise_for_status()
-        data = response.json()
-        new_access_token = data.get("access")
-        if new_access_token:
-            page.client_storage.set(
-                "creativeferrets.tienda.access_token", new_access_token)
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    f"{API_URL}/auth/jwt/refresh/",
+                    json={"refresh": refresh_token},
+                    headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    }
+                ) as response:
+                    response.raise_for_status()
+                    data = await response.json()
+                    new_access_token = data.get("access")
+                    if new_access_token:
+                        await page.client_storage.set_async(
+                            "creativeferrets.tienda.access_token", new_access_token)
+                        return True
+        except aiohttp.ClientError as e:
+            print(f"Error al refrescar el token: {e}")
+            return False
+    return False
 
 
 async def load_user(page):
-    access_token = page.client_storage.get(
+    access_token = await page.client_storage.get_async(
         "creativeferrets.tienda.access_token")
     if access_token:
         try:
@@ -107,7 +114,7 @@ async def load_user(page):
                 ) as response:
                     if response.status == 200:
                         data = await response.json()
-                        page.client_storage.set(
+                        await page.client_storage.set_async(
                             "creativeferrets.tienda.user", data)
                         return data
         except aiohttp.ClientError as e:
@@ -117,54 +124,52 @@ async def load_user(page):
 
 
 async def fetch_user_data(page, user_id):
-  access_token = page.client_storage.get("creativeferrets.tienda.access_token")
-  if access_token:
-    try:
-      async with aiohttp.ClientSession() as session:
-        async with session.get(
-          f"{API_URL}/api/user/user/{user_id}/",
-          headers={
-            "Authorization": f"JWT {access_token}",
-            "Accept": "application/json"
-          }
-        ) as response:
-          if response.status == 200:
-            return await response.json()
-    except aiohttp.ClientError as e:
-      print(f"Error al cargar los datos del usuario: {e}")
-      return None
-  return None
+    access_token = await page.client_storage.get_async(
+        "creativeferrets.tienda.access_token")
+    if access_token:
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(
+                    f"{API_URL}/api/user/user/{user_id}/",
+                    headers={
+                        "Authorization": f"JWT {access_token}",
+                        "Accept": "application/json"
+                    }
+                ) as response:
+                    if response.status == 200:
+                        return await response.json()
+        except aiohttp.ClientError as e:
+            print(f"Error al cargar los datos del usuario: {e}")
+            return None
+    return None
 
 
 async def update_user_data(page, user_id, updated_data):
-  access_token = page.client_storage.get("creativeferrets.tienda.access_token")
-  if access_token:
-    try:
-      async with aiohttp.ClientSession() as session:
-        async with session.put(
-          f"{API_URL}/api/user/user/edit/{user_id}/",
-          json=updated_data,
-          headers={
-            "Authorization": f"JWT {access_token}",
-            "Content-Type": "application/json",
-          },
-        ) as response:
-          if response.status == 200:
+    access_token = await page.client_storage.get_async(
+        "creativeferrets.tienda.access_token")
+    if access_token:
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.put(
+                    f"{API_URL}/api/user/user/edit/{user_id}/",
+                    json=updated_data,
+                    headers={
+                        "Authorization": f"JWT {access_token}",
+                        "Content-Type": "application/json",
+                    },
+                ) as response:
+                    if response.status == 200:
+                        return await response.json()
+        except aiohttp.ClientError as e:
             snack_bar = ft.SnackBar(
-              ft.Text("Datos actualizados correctamente."), bgcolor=ft.Colors.GREEN
-            )
+                ft.Text("Error al actualizar los datos."), bgcolor=ft.Colors.RED)
             page.overlay.append(snack_bar)
             snack_bar.open = True
             page.update()
-            return await response.json()
-    except aiohttp.ClientError as e:
-      snack_bar = ft.SnackBar(ft.Text("Error al actualizar los datos."), bgcolor=ft.Colors.RED)
-      page.overlay.append(snack_bar)
-      snack_bar.open = True
-      page.update()
-      print(f"Error al actualizar los datos del usuario: {e}")
-      return None
-  return None
+            print(f"Error al actualizar los datos del usuario: {e}")
+            return None
+    return None
+
 
 def logout_user(page):
     page.client_storage.remove("creativeferrets.tienda.access_token")

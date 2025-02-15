@@ -1,65 +1,56 @@
-
 import flet as ft
+import asyncio
+
 from pages.utils.navigation import create_footer, create_navbar_product
+from pages.endpoints.Cart import (
+    get_items,
+    get_total,
+    remove_item,
+    update_item,
+)
+from pages.endpoints.User import validate_user
+API_URL = "http://localhost:8000"
 
 def ViewCart(page):
+    # Limpia la UI y asigna la barra de navegación
     page.controls.clear()
     navbar, update_cart_count = create_navbar_product(page)
     page.appbar = navbar
     page.navigation_bar = create_footer(page)
     page.update()
-    
-    # Contenedor principal
-    main_container = ft.Container(
-        expand=True,
-        content=None  # Se definirá al final (cart layout)
-    )
 
-    # Contenedor donde se listarán los productos del carrito
-    cart_items_container = ft.Column(spacing=20)  # Espacio entre tarjetas
-
-    # Texto con el precio total (de todo el carrito)
+    # Contenedores principales
+    main_container = ft.Container(expand=True, content=None)
+    cart_items_container = ft.Column(spacing=20, expand=True)
     total_price_text = ft.Text("", size=20, weight=ft.FontWeight.BOLD)
-
-    # Botón para checkout
-    checkout_button = ft.ElevatedButton(
-        text="Verificar",
-        on_click=lambda e: page.go("/checkout"),
-        bgcolor="#FF5700",
-        color="white",
-        width=150,
+    checkout_button = ft.Container(
+      content=ft.Text("Verificar", color="white", size=14),
+      padding=ft.padding.symmetric(horizontal=20, vertical=10),
+      border_radius=ft.border_radius.all(5),
+      bgcolor="#FF5700",  # naranja
+      alignment=ft.alignment.center,
+      on_click=lambda e: page.go("/checkout"),
+      ink=True,
     )
 
-    def remove_from_cart(e, idx):
-        cart = page.session.get("cart") or []
-        del cart[idx]
-        page.session.set("cart", cart)
-        update_cart_count()
-        update_cart_display()
+    # -------------------------------------------------------------------
+    # FUNCIONES ASÍNCRONAS (llamadas con page.run_task(...) desde wrappers)
+    # -------------------------------------------------------------------
 
-    def increase_quantity(e, idx):
-        cart = page.session.get("cart") or []
-        cart[idx]["quantity"] += 1
-        page.session.set("cart", cart)
-        update_cart_count()
-        update_cart_display()
-
-    def decrease_quantity(e, idx):
-        cart = page.session.get("cart") or []
-        if cart[idx]["quantity"] > 1:
-            cart[idx]["quantity"] -= 1
-        else:
-            del cart[idx]
-        page.session.set("cart", cart)
-        update_cart_count()
-        update_cart_display()
-
-    def update_cart_display():
-        """Refresca la vista del carrito y ajusta la presentación."""
+    async def update_cart_display_async():
+        """Carga todos los productos del carrito y actualiza la UI, sin bloquear."""
         cart_items_container.controls.clear()
-        cart = page.session.get("cart") or []
+        is_valid = await validate_user(page)
+        
+        if not is_valid:
+            return  # Redirección ya realizada en validate_user
+        # # 1) Obtener items del carrito
+        try:
+            items = await get_items(page)
+        except Exception:
+            items = None
 
-        if not cart:
+        if not items or "cart" not in items or len(items["cart"]) == 0:
             # Carrito vacío
             empty_cart_view = ft.Column(
                 expand=True,
@@ -91,150 +82,206 @@ def ViewCart(page):
             cart_items_container.controls.append(empty_cart_view)
             total_price_text.value = ""
             checkout_button.visible = False
-            # Opcional: Fondo para "vacío"
             main_container.bgcolor = None
+            page.update()
+            return
 
-        else:
-            # Sí hay productos
-            main_container.bgcolor = ft.Colors.WHITE
-            checkout_button.visible = True
+        # Carrito con items
+        main_container.bgcolor = ft.Colors.WHITE
+        checkout_button.visible = True
+        cart_items_container.controls.append(
+            ft.Text("Lista del Carrito de Compra", size=22, weight=ft.FontWeight.BOLD)
+        )
 
-            # Agregamos un título (similar a “Lista de Favoritos”)
-            cart_items_container.controls.append(
-                ft.Text("Lista del Carrito de Compra", size=22, weight=ft.FontWeight.BOLD)
+        # 2) Crear UI para cada item
+        for item in items["cart"]:
+            try:
+                product = item["product"]
+                product_id = product["id"]
+                product_name = product["name"]
+                product_price = float(product["price"])
+                quantity = int(item["count"])
+                product_image = product.get("photo", "logo.png")
+                subtotal = product_price * quantity
+            except (KeyError, TypeError) as e:
+                print(f"Error al procesar el item: {e}")
+                continue
+
+            cart_item = ft.Container(
+                padding=ft.padding.all(10),
+                alignment=ft.alignment.center,
+                margin=ft.margin.symmetric(vertical=5),
+                border_radius=ft.border_radius.all(8),
+                shadow=ft.BoxShadow(blur_radius=2, spread_radius=1),
+                bgcolor="#FFFFFF",
+                content=ft.Column(
+                    spacing=10,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    controls=[
+                        ft.Row(
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            spacing=10,
+                            controls=[
+                                ft.Image(
+                                    src=f"{API_URL}{product_image}",
+                                    width=80,
+                                    height=80,
+                                    fit=ft.ImageFit.COVER,
+                                    border_radius=ft.border_radius.all(8),
+                                ),
+                                ft.Column(
+                                    spacing=5,
+                                    expand=True,
+                                    controls=[
+                                        ft.Text(
+                                            product_name,
+                                            size=16,
+                                            weight=ft.FontWeight.BOLD,
+                                            max_lines=2,
+                                            overflow=ft.TextOverflow.ELLIPSIS,
+                                        ),
+                                        ft.Text(
+                                            f"Precio: ${product_price:.2f}",
+                                            size=14,
+                                        ),
+                                        ft.Row(
+                                            controls=[
+                                                ft.IconButton(
+                                                    icon=ft.Icons.REMOVE_CIRCLE_OUTLINE,
+                                                    on_click=lambda e, pid=product_id, qty=quantity: decrease_quantity(pid, qty),
+                                                ),
+                                                ft.Text(
+                                                    str(quantity),
+                                                    size=16,
+                                                    weight=ft.FontWeight.BOLD,
+                                                    text_align=ft.TextAlign.CENTER,
+                                                ),
+                                                ft.IconButton(
+                                                    icon=ft.Icons.ADD_CIRCLE_OUTLINE,
+                                                    on_click=lambda e, pid=product_id, qty=quantity: increase_quantity(pid, qty),
+                                                ),
+                                            ],
+                                        ),
+                                    ],
+                                ),
+                                ft.IconButton(
+                                    icon=ft.Icons.DELETE_OUTLINE,
+                                    icon_color=ft.Colors.RED,
+                                    on_click=lambda e, pid=product_id: remove_item_from_cart(pid),
+                                ),
+                            ],
+                        ),
+                        ft.Row(
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            controls=[
+                                ft.Text(f"Cantidad ({quantity}) :", size=14),
+                                ft.Text(f"${subtotal:.2f}", size=14),
+                            ],
+                        ),
+                    ],
+                ),
             )
+            cart_items_container.controls.append(cart_item)
 
-            # Creamos la tarjeta para cada ítem
-            for idx, item in enumerate(cart):
-                if "quantity" not in item:
-                    item["quantity"] = 1
-                
-                product_image = item["image"]
-                product_name  = item["name"]
-                product_price = float(item["price"])  # Convertimos a float
-                quantity      = item["quantity"]
-                subtotal      = product_price * quantity
+        # 3) Obtener total
+        total_data = None
+        try:
+            total_data = await get_total(page)
+        except Exception:
+            pass
 
-                cart_item = ft.Container(
-                    padding=ft.padding.all(10),
-                    alignment=ft.alignment.center,
-                    margin=ft.margin.symmetric(vertical=5),
-                    border_radius=ft.border_radius.all(8),
-                    shadow=ft.BoxShadow(
-                        blur_radius=2,
-                        spread_radius=1,
-                    ),
-                    bgcolor="#FFFFFF",
-                    content=ft.Column(
-                        spacing=10,
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        controls=[
-                            # Fila superior: imagen, datos, botones
-                            ft.Row(
-                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                                spacing=10,
-                                controls=[
-                                    # Imagen
-                                    ft.Image(
-                                        src=product_image,
-                                        width=80,
-                                        height=80,
-                                        fit=ft.ImageFit.COVER,
-                                        border_radius=ft.border_radius.all(8),
-                                    ),
-                                    # Nombre, precio, más/menos
-                                    ft.Column(
-                                        spacing=5,
-                                        expand=True,
-                                        controls=[
-                                            ft.Text(
-                                                product_name,
-                                                size=16,
-                                                weight=ft.FontWeight.BOLD,
-                                                max_lines=2,
-                                                overflow=ft.TextOverflow.ELLIPSIS,
-                                            ),
-                                            ft.Text(
-                                                f"Precio: ${product_price:.2f}",
-                                                size=14,
-                                            ),
-                                            # Fila con +, - y cantidad
-                                            ft.Row(
-                                                controls=[
-                                                    ft.IconButton(
-                                                        icon=ft.Icons.REMOVE_CIRCLE_OUTLINE,
-                                                        on_click=lambda e, i=idx: decrease_quantity(e, i),
-                                                    ),
-                                                    ft.Text(
-                                                        str(quantity),
-                                                        size=16,
-                                                        weight=ft.FontWeight.BOLD,
-                                                        text_align=ft.TextAlign.CENTER,
-                                                    ),
-                                                    ft.IconButton(
-                                                        icon=ft.Icons.ADD_CIRCLE_OUTLINE,
-                                                        on_click=lambda e, i=idx: increase_quantity(e, i),
-                                                    ),
-                                                ],
-                                            ),
-                                        ],
-                                    ),
-                                    # Icono de eliminar
-                                    ft.IconButton(
-                                        icon=ft.Icons.DELETE_OUTLINE,
-                                        on_click=lambda e, i=idx: remove_from_cart(e, i),
-                                        icon_color=ft.Colors.RED,
-                                    ),
-                                ],
-                            ),
-                            # Fila inferior: "Total Order (X) : $subtotal"
-                            ft.Row(
-                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                                controls=[
-                                    ft.Text(
-                                        f"Cantidad ({quantity}) :",
-                                        size=14
-                                    ),
-                                    ft.Text(
-                                        f"${subtotal:.2f}",
-                                        size=14
-                                    ),
-                                ],
-                            ),
-                        ],
-                    ),
-                )
-                cart_items_container.controls.append(cart_item)
-
-            # Calculamos el precio total de todo el carrito
-            total_price = sum(float(i["price"]) * i["quantity"] for i in cart)
-            total_price_text.value = f"Total: ${total_price:.2f}"
+        if total_data and "total_cost" in total_data:
+            total_value = float(total_data["total_cost"])
+            total_price_text.value = f"Total: ${total_value:.2f}"
+        else:
+            total_price_text.value = "Total: $0.00"
 
         page.update()
 
-    # Columna general con el carrito, total y botón de checkout
+    async def remove_item_from_cart_async(product_id):
+        """Elimina un producto del carrito y refresca la UI."""
+        result = None
+        try:
+            result = await remove_item(page, product_id)
+        except Exception:
+            pass
+        if result:
+            # Refrescar la pantalla
+            await update_cart_display_async()
+            # SnackBar
+            snack_bar = ft.SnackBar(
+                content=ft.Text("Producto eliminado del carrito."),
+                bgcolor=ft.Colors.ORANGE,
+            )
+            page.overlay.append(snack_bar)
+            snack_bar.open = True
+        # Actualizar contador
+        update_cart_count()
+        page.update()
+
+    async def increase_quantity_async(product_id, current_qty):
+        """Aumenta la cantidad en 1 y refresca la UI."""
+        new_qty = current_qty + 1
+        result = None
+        try:
+            result = await update_item(page, product_id, new_qty)
+        except Exception:
+            pass
+        if result:
+            await update_cart_display_async()
+        update_cart_count()
+        page.update()
+
+    async def decrease_quantity_async(product_id, current_qty):
+        """Disminuye la cantidad en 1 o elimina si queda en 0, y refresca la UI."""
+        new_qty = current_qty - 1
+        result = None
+        try:
+            if new_qty >= 1:
+                result = await update_item(page, product_id, new_qty)
+            else:
+                result = await remove_item(page, product_id)
+        except Exception:
+            pass
+        if result:
+            await update_cart_display_async()
+        update_cart_count()
+        page.update()
+
+    # ----------------------------------------------------------------------
+    # WRAPPERS SINCRÓNICOS que se asocian a botones y llaman a corrutinas:
+    # ----------------------------------------------------------------------
+    def update_cart_display():
+        page.run_task(update_cart_display_async)
+
+    def remove_item_from_cart(product_id):
+        page.run_task(remove_item_from_cart_async, product_id)
+
+    def increase_quantity(product_id, current_qty):
+        page.run_task(increase_quantity_async, product_id, current_qty)
+
+    def decrease_quantity(product_id, current_qty):
+        page.run_task(decrease_quantity_async, product_id, current_qty)
+
+    # ----------------------------------------------------------------------
+    # ESTRUCTURA PRINCIPAL DE LA VISTA
+    # ----------------------------------------------------------------------
     main_container.content = ft.Container(
-      padding=ft.padding.all(10),
-      content=ft.Column(
-        controls=[
-            cart_items_container,
-            # Sección final: total + botón
-            ft.Row(
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                expand=True,
-                controls=[total_price_text, checkout_button],
-            ),
-        ],
-        expand=True,
-        scroll=ft.ScrollMode.HIDDEN,
-        alignment=ft.MainAxisAlignment.START,
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        spacing=10,
-    )
+        padding=ft.padding.all(10),
+        content=ft.Column(
+            controls=[
+                cart_items_container,
+                total_price_text,
+                checkout_button
+            ],
+            expand=True,
+            scroll=ft.ScrollMode.AUTO,
+            spacing=10,
+        ),
     )
 
-    # Cargamos la vista al iniciar
+    # Al cargar la vista, refrescamos el carrito y el contador
     update_cart_display()
     update_cart_count()
 

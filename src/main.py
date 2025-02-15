@@ -1,8 +1,3 @@
-from pages.endpoints.Auth import refresh_token, load_user, logout_user
-from pages.utils.carusel import create_carousel
-from pages.utils.image import create_image_with_loader
-from pages.utils.navigation import create_navbar_home
-from pages.utils.navigation import create_footer
 import flet as ft
 import re
 import os
@@ -152,4 +147,4 @@ async def main(page: ft.Page):
     handle_navigation(page, view_manager, page.route)
 
 if __name__ == "__main__":
-    asyncio.run(ft.app_async(target=main, assets_dir="assets"))
+    asyncio.run(ft.app_async(target=main, assets_dir="assets",port=8550,view=ft.WEB_BROWSER))

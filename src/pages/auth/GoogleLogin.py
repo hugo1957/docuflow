@@ -1,30 +1,35 @@
-import os
 import flet as ft
 from flet.auth import OAuthProvider
 
-def main(page: ft.Page):
-    provider = OAuthProvider(
-        client_id=os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY"),
-        client_secret=os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET"),
+
+def ViewGoogleLogin():
+    """
+    Configura el proveedor de autenticación de Google.
+    """
+    return OAuthProvider(
+        client_id="684509096725-pm1gdgb80i3fck9k5gd1kq7l7daf47a7.apps.googleusercontent.com",
+        client_secret="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",
         authorization_endpoint="https://accounts.google.com/o/oauth2/v2/auth",
         token_endpoint="https://oauth2.googleapis.com/token",
         user_endpoint="https://www.googleapis.com/oauth2/v2/userinfo",
         user_scopes=["profile", "email"],
-        user_id_fn=lambda u: u["id"],  # define cómo se extrae el ID del JSON
+        user_id_fn=lambda u: u["id"],  # Extrae el ID único del usuario.
         redirect_url="http://localhost:8550/oauth_callback",
     )
 
-    # Luego el resto es análogo al ejemplo anterior:
-    def on_login(e: ft.LoginEvent):
-        if e.error:
-            print("Error:", e.error)
-            return
-        print("User ID:", page.auth.user.id)
-        print("Email:", page.auth.user["email"])
-        # y así sucesivamente
 
-    page.on_login = on_login
-    page.add(ft.ElevatedButton("Iniciar sesión con Google", on_click=lambda _: page.login(provider)))
-    ft.app(main, port=8550, view=ft.WEB_BROWSER)
+def on_login(e: ft.LoginEvent):
+    """
+    Manejador del evento `on_login` para procesar el resultado del login.
+    """
+    if e.error:
+        print(f"Error en el login: {e.error}")
+        return
 
-ft.app(main, port=8550)
+    # Información del usuario autenticado
+    print("Autenticación exitosa")
+    print("Token de acceso:", e.token.access_token)
+    print("Usuario ID:", e.user.id)
+    print("Email:", e.user.get("email", "No proporcionado"))
+    print("Nombre:", e.user.get("name", "No proporcionado"))
+

@@ -61,5 +61,5 @@ def PageNotFound(page):
             spacing=10,
         )
     )
-
+    update_cart_count()
     return content

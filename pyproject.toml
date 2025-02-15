@@ -3,14 +3,19 @@ name = "docuflow"
 version = "0.0.1"
 description = ""
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 authors = [
   {name = "Jesus Delgado", email = "themurder261@gmail.com"}
 ]
+
+
 dependencies = [
-  "flet==0.25.2",
+  "flet==0.26.0",
   "requests",
-  "Pillow"
+  "Pillow",
+  "aiohttp",
+  "flet_core",
+  "flet-lottie"
 ]
 
 [tool.flet.flutter.pubspec.dependency_overrides]
@@ -20,13 +25,13 @@ file_picker = "8.1.4"
 org = "com.mycompany"
 product = "DocuFlow"
 company = "Flet"
-copyright = "Copyright (C) 2024 by Flet"
+copyright = "Copyright (C) 2025 by DocuFlow"
+app.module = "main.py"
+app.path = "src"
 compile.app = true 
 compile.packages = true 
 compile.cleanup = true 
 
-[tool.flet.app]
-path = "src"
 
 [tool.flet.splash]
 color = "#007354"
@@ -35,7 +40,10 @@ web = false
 ios = false  
 android = false 
 
+
 [tool.flet.android]
 adaptive_icon_background = "" # --android-adaptive-icon-background
 split_per_abi = false # --split-per-abi
 
+[tool.flet.flutter.dependencies]
+flet_google_signin.path = "/Users/themu/Proyectos/docuflow/src/flutter/flet_google_signin"
